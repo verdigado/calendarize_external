@@ -1,0 +1,21 @@
+{
+    "name": "verdigado/calendarize-external",
+    "description": "Calendarize users can edit external calendars",
+    "type": "typo3-cms-extension",
+    "license": [
+        "GPL-2.0-or-later"
+    ],
+    "require": {
+        "typo3/cms-core": "^10.4 || ^11.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Verdigado\\CalendarizeExternal\\": "Classes/"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "calendarize_external"
+        }
+    }
+}
