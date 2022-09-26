@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf" date="2022-09-26T12:53:40Z" product-name="calendarize_external">
+		<header/>
+		<body>
+			<trans-unit id="tx_calendarizeexternal_domain_model_externalcalendar" resname="tx_calendarizeexternal_domain_model_externalcalendar">
+				<source>External Calendar</source>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_externalcalendar.title" resname="tx_calendarizeexternal_domain_model_externalcalendar.title">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_externalcalendar.ics_url" resname="tx_calendarizeexternal_domain_model_externalcalendar.ics_url">
+				<source>Ics Url</source>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_externalcalendar.note" resname="tx_calendarizeexternal_domain_model_externalcalendar.note">
+				<source>Note</source>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_externalcalendar.scheduler" resname="tx_calendarizeexternal_domain_model_externalcalendar.scheduler">
+				<source>Scheduler</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

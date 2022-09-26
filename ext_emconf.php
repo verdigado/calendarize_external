@@ -1,16 +1,19 @@
 <?php
 
 $EM_CONF[$_EXTKEY] = [
-    'title' => 'calendarize_external',
-    'description' => 'Calendarize users can edit external calendars',
+    'title' => 'Calendarize External',
+    'description' => 'allow editors to create records for external ics imports',
+    'category' => 'be',
+    'author' => 'Falko Trojahn',
+    'author_email' => 'support@verdigado.net',
+    'state' => 'alpha',
+    'clearCacheOnLoad' => 0,
+    'version' => '0.0.2',
     'constraints' => [
         'depends' => [
-            'typo3' => '10.4.0-11.5.99',
+            'typo3' => '10.4.0-10.4.99',
         ],
-    ],
-    'autoload' => [
-        'psr-4' => [
-            'Verdigado\\CalendarizeExternal\\' => 'Classes/',
-        ],
+        'conflicts' => [],
+        'suggests' => [],
     ],
 ];
