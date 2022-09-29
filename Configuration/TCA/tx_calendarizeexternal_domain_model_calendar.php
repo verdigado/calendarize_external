@@ -1,7 +1,7 @@
 <?php
 return [
     'ctrl' => [
-        'title' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_externalcalendar',
+        'title' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_calendar',
         'label' => 'title',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
@@ -14,7 +14,7 @@ return [
             'endtime' => 'endtime',
         ],
         'searchFields' => 'title,ics_url,note',
-        'iconfile' => 'EXT:calendarize_external/Resources/Public/Icons/tx_calendarizeexternal_domain_model_externalcalendar.gif'
+        'iconfile' => 'EXT:calendarize_external/Resources/Public/Icons/tx_calendarizeexternal_domain_model_calendar.gif'
     ],
     'types' => [
         '1' => ['showitem' => 'title, ics_url, note, scheduler, --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access, hidden, starttime, endtime'],
@@ -67,7 +67,7 @@ return [
 
         'title' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_externalcalendar.title',
+            'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_calendar.title',
             'config' => [
                 'type' => 'input',
                 'size' => 30,
@@ -77,7 +77,7 @@ return [
         ],
         'ics_url' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_externalcalendar.ics_url',
+            'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_calendar.ics_url',
             'config' => [
                 'type' => 'input',
                 'size' => 30,
@@ -87,7 +87,7 @@ return [
         ],
         'note' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_externalcalendar.note',
+            'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_calendar.note',
             'config' => [
                 'type' => 'input',
                 'size' => 30,
@@ -97,7 +97,7 @@ return [
         ],
         'scheduler' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_externalcalendar.scheduler',
+            'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_calendar.scheduler',
             'config' => [
                 'type' => 'input',
                 'size' => 4,
@@ -105,6 +105,6 @@ return [
                 'default' => 0
             ]
         ],
-    
+
     ],
 ];
