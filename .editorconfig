@@ -25,7 +25,12 @@ indent_style = tab
 indent_size = 2
 
 # ReST files
-[*.rst]
+[{*.rst,*.rst.txt}]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
 indent_size = 3
 max_line_length = 80
 
@@ -52,4 +57,10 @@ indent_style = tab
 
 # Markdown files
 [*.md]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
 max_line_length = 80

@@ -76,7 +76,7 @@ class CalImportCommandController extends Command
             ->get('calendarize_external', 'scheduleRanges');
         $this->scheduleRanges = (explode(',', $scheduleRanges));
         if (empty($this->scheduleRanges[0])) {
-            $this->scheduleRanges = array ( 2, 6);
+            $this->scheduleRanges = array(2, 6);
         }
 
         parent::__construct();
@@ -89,8 +89,8 @@ class CalImportCommandController extends Command
             ->addArgument(
                 'schedule',
                 InputArgument::REQUIRED,
-                "The frequency in hours must be one of: " . implode(',',$this->scheduleRanges) ." \r\n"
-                 . "Hint: You can set the schedule ranges in the extension configuration.\r\n"
+                "The frequency in hours must be one of: " . implode(',', $this->scheduleRanges) . " \r\n"
+                . "Hint: You can set the schedule ranges in the extension configuration.\r\n"
             )
             ->addOption(
                 'since',
@@ -99,6 +99,14 @@ class CalImportCommandController extends Command
                 "Imports all events since the given date.\n"
                 . 'Valid PHP date format e.g. "2021-10-01", "-10 days"' . "\n"
                 . '(Note: use --since="-x days" syntax on the console)'
+            )
+            ->addOption(
+                'reindex',
+                'r',
+                InputOption::VALUE_NONE,
+                "Do reindex after import of all entries.\n"
+                . "You don't need this if you have another reindexer job running. \n"
+                . "Use -r or --reindex \n"
             );
     }
 
@@ -129,13 +137,14 @@ class CalImportCommandController extends Command
 
         // Process skip
         $since = $input->getOption('since');
+        $reindex = $input->getOption('reindex');
         $ignoreBeforeDate = null;
         $ignoreTwoYearsBeforeDate = new \DateTime("-2 years");
         $msgsince = '';
         if (null !== $since) {
-            $ignoreBeforeDate = new \DateTime("-". ltrim ($since, '-'));
+            $ignoreBeforeDate = new \DateTime("-" . ltrim($since, '-'));
             $io->text('Skipping all events before ' . $ignoreBeforeDate->format(\DateTimeInterface::ATOM));
-            $msgsince = $ignoreBeforeDate->format("d-m-y H:i") ;
+            $msgsince = $ignoreBeforeDate->format("d-m-y H:i");
         }
 
         // @todo get all external calendars from database with icsfile and pid
@@ -162,7 +171,7 @@ class CalImportCommandController extends Command
                 $ignoreDate = $ignoreTwoYearsBeforeDate;  // default if not run
             }
 
-                // Fetch external URI and write it to a temporary file
+            // Fetch external URI and write it to a temporary file
             $io->section('Start to checkout the calendar');
 
             try {
@@ -192,7 +201,7 @@ class CalImportCommandController extends Command
                 $errormsg .= 'Unable to process events: ' . $e->getMessage();
                 $connection->update(
                     $table,
-                    ['last_message' =>  "ERROR: \r\n" . $errormsg, 'last_run' => $lastrun],
+                    ['last_message' => "ERROR: \r\n" . $errormsg, 'last_run' => $lastrun],
                     ['uid' => $record['uid']]
                 );
                 continue;
@@ -227,19 +236,19 @@ class CalImportCommandController extends Command
             $io->text('Skipped ' . $skipCount . ' Events');
             $msg .= "Dispatched $dispatchCount Events\r\n";
             $msg .= "Skipped  $skipCount Events";
-            $msg .= (($record['last_run'] == 0) ? " not within last two years (first run only)." : ( $msgsince ? " before " . $msgsince : "")) . "\r\n" ;
+            $msg .= (($record['last_run'] == 0) ? " not within last two years (first run only)." : ($msgsince ? " before " . $msgsince : "")) . "\r\n";
             $connection->update(
                 $table,
-                [ 'last_message' => $msg, 'last_run' => $lastrun ],
+                ['last_message' => $msg, 'last_run' => $lastrun],
                 ['uid' => $record['uid']]
             );
 
         }
         // after all calendar imports run reindex events
-        // @todo make active
-      //  $io->section('Run Reindex process after import');
-     //   $this->indexerService->reindexAll();
-
+        if ($reindex) {
+            $io->section('Running reindex process after import');
+            $this->indexerService->reindexAll();
+        }
 
         return 0;
     }
