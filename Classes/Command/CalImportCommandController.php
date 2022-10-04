@@ -97,7 +97,7 @@ class CalImportCommandController extends Command
                 's',
                 InputOption::VALUE_OPTIONAL,
                 "Imports all events since the given date.\n"
-                . 'Valid PHP date format e.g. "2014-04-14", "-10 days"' . "\n"
+                . 'Valid PHP date format e.g. "2021-10-01", "-10 days"' . "\n"
                 . '(Note: use --since="-x days" syntax on the console)'
             );
     }
@@ -130,10 +130,10 @@ class CalImportCommandController extends Command
         // Process skip
         $since = $input->getOption('since');
         $ignoreBeforeDate = null;
+        $ignoreTwoYearsBeforeDate = new \DateTime("-2 years");
         $msgsince = '';
         if (null !== $since) {
             $ignoreBeforeDate = new \DateTime("-". ltrim ($since, '-'));
-            $ignoreTwoYearsBeforeDate = new \DateTime("-2 years");
             $io->text('Skipping all events before ' . $ignoreBeforeDate->format(\DateTimeInterface::ATOM));
             $msgsince = $ignoreBeforeDate->format("d-m-y H:i") ;
         }
@@ -157,8 +157,12 @@ class CalImportCommandController extends Command
             $errormsg = '';
             $now = new \DateTime();
             $lastrun = $now->getTimestamp();
+            $ignoreDate = $ignoreBeforeDate; // from --since
+            if ($record['last_run'] == 0) {
+                $ignoreDate = $ignoreTwoYearsBeforeDate;  // default if not run
+            }
 
-            // Fetch external URI and write it to a temporary file
+                // Fetch external URI and write it to a temporary file
             $io->section('Start to checkout the calendar');
 
             try {
@@ -207,7 +211,7 @@ class CalImportCommandController extends Command
             $skipCount = $dispatchCount = 0;
             foreach ($events as $event) {
                 // Skip events before given date, on first run import <= -2 years
-                if (($event->getEndDate() ?? $event->getStartDate()) < ($record['last_run'] == 0) ? $ignoreTwoYearsBeforeDate : $ignoreBeforeDate) {
+                if (($event->getEndDate() ?? $event->getStartDate()) < $ignoreDate) {
                     $io->progressAdvance();
                     ++$skipCount;
                     continue;
@@ -222,7 +226,8 @@ class CalImportCommandController extends Command
             $io->text('Dispatched ' . $dispatchCount . ' Events');
             $io->text('Skipped ' . $skipCount . ' Events');
             $msg .= "Dispatched $dispatchCount Events\r\n";
-            $msg .= "Skipped  $skipCount Events" . ($record['last_run'] == 0) ? "" : ( $msgsince ? " before " . $msgsince : "") . "\r\n" ;
+            $msg .= "Skipped  $skipCount Events";
+            $msg .= (($record['last_run'] == 0) ? " not within last two years (first run only)." : ( $msgsince ? " before " . $msgsince : "")) . "\r\n" ;
             $connection->update(
                 $table,
                 [ 'last_message' => $msg, 'last_run' => $lastrun ],
