@@ -74,7 +74,7 @@ class CalImportCommandController extends Command
             ->addArgument(
                 'schedule',
                 InputArgument::REQUIRED,
-                'The frequency must be one of 2h,12h,daily'
+                'The frequency must be one of: 2h, 12h, 1d, 2d'
             )
             ->addOption(
                 'since',
@@ -102,13 +102,10 @@ class CalImportCommandController extends Command
         $table = 'tx_calendarizeexternal_domain_model_calendar';
 
         $schedule = $input->getArgument('schedule');
-        $runfrequency = null;
-        $schedules = array ('2h','12h','1d','2d');
-        if (in_array($schedule,$schedules)) {
-            $runfrequency = $schedule;
-            $io->text('Run all external calendars which have set schedule to ' . $runfrequency);
+        if (MathUtility::canBeInterpretedAsInteger($schedule)) {
+            $io->text('Run all external calendars which have set schedule to ' . $schedule);
         } else {
-            $io->error('Schedule must be one of 2h, 12h, 1d, 2d');
+            $io->error('Schedule intervall in hours');
 
             return 1;
 
@@ -127,15 +124,19 @@ class CalImportCommandController extends Command
         $queryBuilder = $connection->createQueryBuilder();
         $queryBuilder->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
         $statement = $queryBuilder
-            ->select('uid', 'pid', 'title', 'ics_url', 'scheduler_interval', 'last_run', 'last_message')
+            ->select('uid', 'pid', 'title', 'ics_url', 'scheduler', 'last_run', 'last_message')
             ->from($table)
             ->where(
-                $queryBuilder->expr()->eq('scheduler_interval', $queryBuilder->createNamedParameter((int)$runfrequency, \PDO::PARAM_INT))
+                $queryBuilder->expr()->eq('scheduler', $queryBuilder->createNamedParameter((int)$schedule, \PDO::PARAM_INT))
             )
             ->execute();
 
         // loop thru all external calendars by external calendar record
         while ($record = $statement->fetch()) {
+            // collect messages per record
+            $msg = '';
+            $errormsg = '';
+
             // Fetch external URI and write it to a temporary file
             $io->section('Start to checkout the calendar');
 
@@ -144,6 +145,13 @@ class CalImportCommandController extends Command
                 $icalFile = $this->iCalUrlService->getOrCreateLocalFileForUrl($record['ics_url']);
             } catch (UnableToGetFileForUrlException $e) {
                 $io->error('Invalid URL: ' . $e->getMessage());
+                $errormsg .= "ical file: invalid url.\n";
+                $connection->update(
+                    $table,
+                    ['last_message' => 'ERROR: '. $errormsg ],
+                    // ['last_run' => date+time],
+                    ['uid' => $record['uid']]
+                );
 
                 continue;
             }
@@ -157,6 +165,13 @@ class CalImportCommandController extends Command
                     $io->writeln($e->getTraceAsString());
                 }
 
+                $errormsg .= 'Unable to process events: ' . $e->getMessage();
+                $connection->update(
+                    $table,
+                    ['last_message' => 'ERROR: \n' . $errormsg],
+                    // ['last_run' => date+time],
+                    ['uid' => $record['uid']]
+                );
                 continue;
             } finally {
                 // Remove temporary file
@@ -165,6 +180,7 @@ class CalImportCommandController extends Command
             // @todo write last run and last message back to record
 
             $io->text('Found ' . \count($events) . ' events in ' . $record['title'] . ' on page ' . $record['pid']);
+            $msg .= 'Found ' . \count($events) . ' events. \n';
 
             $io->section('Send ImportSingleIcalEvent for each event');
             $io->progressStart(\count($events));
@@ -178,7 +194,7 @@ class CalImportCommandController extends Command
                     continue;
                 }
                 // @todo get pid from external calendar record
-                $this->eventDispatcher->dispatch(new ImportSingleIcalEvent($event, $pid));
+                $this->eventDispatcher->dispatch(new ImportSingleIcalEvent($event, $record['pid']));
                 ++$dispatchCount;
                 $io->progressAdvance();
             }
@@ -186,11 +202,20 @@ class CalImportCommandController extends Command
 
             $io->text('Dispatched ' . $dispatchCount . ' Events');
             $io->text('Skipped ' . $skipCount . ' Events');
+            $msg .= 'Dispatched ' . $dispatchCount . ' Events\n';
+            $msg .= 'Skipped ' . $skipCount . ' Events';
+            $connection->update(
+                $table,
+                ['last_message' => $msg],
+                // ['last_run' => date+time],
+                ['uid' => $record['uid']]
+            );
 
         }
         // after all calendar imports run reindex events
-        $io->section('Run Reindex process after import');
-        $this->indexerService->reindexAll();
+        // @todo make active
+      //  $io->section('Run Reindex process after import');
+     //   $this->indexerService->reindexAll();
 
 
         return 0;
