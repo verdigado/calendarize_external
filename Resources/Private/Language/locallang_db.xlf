@@ -12,6 +12,12 @@
 			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.ics_url" resname="tx_calendarizeexternal_domain_model_calendar.ics_url">
 				<source>Ics Url</source>
 			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.last_message" resname="tx_calendarizeexternal_domain_model_calendar.last_message">
+				<source>Last message</source>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.last_run" resname="tx_calendarizeexternal_domain_model_calendar.last_run">
+				<source>Time of last run</source>
+			</trans-unit>
 			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.note" resname="tx_calendarizeexternal_domain_model_calendar.note">
 				<source>Note</source>
 			</trans-unit>

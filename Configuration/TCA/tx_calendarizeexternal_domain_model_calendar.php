@@ -13,11 +13,11 @@ return [
             'starttime' => 'starttime',
             'endtime' => 'endtime',
         ],
-        'searchFields' => 'title,ics_url,note',
+        'searchFields' => 'title,ics_url,note,last_message',
         'iconfile' => 'EXT:calendarize_external/Resources/Public/Icons/tx_calendarizeexternal_domain_model_calendar.gif'
     ],
     'types' => [
-        '1' => ['showitem' => 'title, ics_url, note, scheduler_interval, --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access, hidden, starttime, endtime'],
+        '1' => ['showitem' => 'title, ics_url, note, scheduler_interval, last_run, last_message, --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access, hidden, starttime, endtime'],
     ],
     'columns' => [
         'hidden' => [
@@ -100,11 +100,33 @@ return [
             'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_calendar.scheduler_interval
             ',
             'config' => [
-                'type' => 'input',
-                'size' => 4,
+                'default' => 6,
                 'eval' => 'int',
-                'default' => 0
+                'itemsProcFunc' => \Verdigado\CalendarizeExternal\Hooks\ItemsProcFunc::class . '->user_schedulerIntervalSelect',
+                'type' => 'select',
+                'renderType' => 'selectSingle',
+                'size' => 1
             ]
+        ],
+        'last_message' => [
+            'exclude' => true,
+            'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_calendar.last_message',
+            'config' => [
+                'type' => 'text',
+                'cols' => 30,
+                'rows' => 5,
+                'readOnly' => true
+            ],
+        ],
+        'last_run' => [
+            'exclude' => true,
+            'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_calendar.last_run',
+            'config' => [
+                'type' => 'input',
+                'readOnly' => true,
+                'renderType' => 'inputDateTime',
+                'eval' => 'datetime,int',
+            ],
         ],
 
     ],
