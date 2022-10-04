@@ -42,11 +42,11 @@ class ExternalCalendar extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     protected $note = '';
 
     /**
-     * scheduler
+     * scheduler_interval
      *
      * @var int
      */
-    protected $scheduler = 0;
+    protected $scheduler_interval = 0;
 
     /**
      * Returns the title
@@ -112,23 +112,23 @@ class ExternalCalendar extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
-     * Returns the scheduler
+     * Returns the scheduler_interval
      *
-     * @return int $scheduler
+     * @return int $scheduler_interval
      */
-    public function getScheduler()
+    public function getSchedulerInterval()
     {
-        return $this->scheduler;
+        return $this->scheduler_interval;
     }
 
     /**
-     * Sets the scheduler
+     * Sets the scheduler_interval
      *
-     * @param int $scheduler
+     * @param int $scheduler_interval
      * @return void
      */
-    public function setScheduler(int $scheduler)
+    public function setSchedulerInterval(int $scheduler_interval)
     {
-        $this->scheduler = $scheduler;
+        $this->scheduler = $scheduler_interval;
     }
 }

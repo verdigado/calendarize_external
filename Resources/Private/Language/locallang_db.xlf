@@ -15,8 +15,8 @@
 			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.note" resname="tx_calendarizeexternal_domain_model_calendar.note">
 				<source>Note</source>
 			</trans-unit>
-			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.scheduler" resname="tx_calendarizeexternal_domain_model_calendar.scheduler">
-				<source>Scheduler</source>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.scheduler_interval" resname="tx_calendarizeexternal_domain_model_calendar.scheduler_interval">
+				<source>Scheduler Interval</source>
 			</trans-unit>
 		</body>
 	</file>

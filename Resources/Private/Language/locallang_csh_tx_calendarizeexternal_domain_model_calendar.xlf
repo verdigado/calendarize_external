@@ -12,8 +12,8 @@
 			<trans-unit id="note.description" resname="note.description">
 				<source>note</source>
 			</trans-unit>
-			<trans-unit id="scheduler.description" resname="scheduler.description">
-				<source>scheduler</source>
+			<trans-unit id="scheduler_interval.description" resname="scheduler_interval.description">
+				<source>scheduler_interval</source>
 			</trans-unit>
 		</body>
 	</file>

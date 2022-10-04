@@ -17,7 +17,7 @@ return [
         'iconfile' => 'EXT:calendarize_external/Resources/Public/Icons/tx_calendarizeexternal_domain_model_calendar.gif'
     ],
     'types' => [
-        '1' => ['showitem' => 'title, ics_url, note, scheduler, --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access, hidden, starttime, endtime'],
+        '1' => ['showitem' => 'title, ics_url, note, scheduler_interval, --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access, hidden, starttime, endtime'],
     ],
     'columns' => [
         'hidden' => [
@@ -95,9 +95,10 @@ return [
                 'default' => ''
             ],
         ],
-        'scheduler' => [
+        'scheduler_interval' => [
             'exclude' => true,
-            'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_calendar.scheduler',
+            'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_calendar.scheduler_interval
+            ',
             'config' => [
                 'type' => 'input',
                 'size' => 4,

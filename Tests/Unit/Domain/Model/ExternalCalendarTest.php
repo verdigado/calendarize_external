@@ -101,21 +101,21 @@ class ExternalCalendarTest extends UnitTestCase
     /**
      * @test
      */
-    public function getSchedulerReturnsInitialValueForInt(): void
+    public function getSchedulerIntervalReturnsInitialValueForInt(): void
     {
         self::assertSame(
             0,
-            $this->subject->getScheduler()
+            $this->subject->getSchedulerInterval()
         );
     }
 
     /**
      * @test
      */
-    public function setSchedulerForIntSetsScheduler(): void
+    public function setSchedulerIntervalForIntSetsSchedulerInterval(): void
     {
-        $this->subject->setScheduler(12);
+        $this->subject->setSchedulerInterval(12);
 
-        self::assertEquals(12, $this->subject->_get('scheduler'));
+        self::assertEquals(12, $this->subject->_get('scheduler_interval'));
     }
 }

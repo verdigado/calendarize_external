@@ -103,7 +103,7 @@ class CalImportCommandController extends Command
 
         $schedule = $input->getArgument('schedule');
         if (MathUtility::canBeInterpretedAsInteger($schedule)) {
-            $io->text('Run all external calendars which have set schedule to ' . $schedule);
+            $io->text('Run all external calendars which have set schedule to <=' . $schedule . 'h.');
         } else {
             $io->error('Schedule intervall in hours');
 
@@ -124,10 +124,10 @@ class CalImportCommandController extends Command
         $queryBuilder = $connection->createQueryBuilder();
         $queryBuilder->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
         $statement = $queryBuilder
-            ->select('uid', 'pid', 'title', 'ics_url', 'scheduler', 'last_run', 'last_message')
+            ->select('uid', 'pid', 'title', 'ics_url', 'scheduler_interval', 'last_run', 'last_message')
             ->from($table)
             ->where(
-                $queryBuilder->expr()->eq('scheduler', $queryBuilder->createNamedParameter((int)$schedule, \PDO::PARAM_INT))
+                $queryBuilder->expr()->eq('scheduler_interval', $queryBuilder->createNamedParameter((int)$schedule, \PDO::PARAM_INT))
             )
             ->execute();
 

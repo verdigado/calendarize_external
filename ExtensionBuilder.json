@@ -78,7 +78,7 @@
                             "propertyIsL10nModeExclude": false,
                             "propertyIsNullable": false,
                             "propertyIsRequired": false,
-                            "propertyName": "scheduler",
+                            "propertyName": "scheduler_interval",
                             "propertyType": "Integer",
                             "uid": "598775073109"
                         }
