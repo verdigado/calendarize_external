@@ -5,5 +5,6 @@ CREATE TABLE tx_calendarizeexternal_domain_model_calendar (
 	note varchar(255) NOT NULL DEFAULT '',
 	last_run int(11) NOT NULL DEFAULT '0',
 	last_message varchar(255) NOT NULL DEFAULT '',
+	md5 varchar(32) DEFAULT '',
 	description text,
 );
