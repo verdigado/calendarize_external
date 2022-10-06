@@ -134,9 +134,9 @@ return [
             'exclude' => true,
             'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_calendar.description',
             'config' => [
-                'type' => 'input',
-                'size' => 30,
-                'eval' => 'trim',
+                'type' => 'text',
+                'cols' => 60,
+                'rows' => 5,
                 'default' => ''
             ],
         ],
