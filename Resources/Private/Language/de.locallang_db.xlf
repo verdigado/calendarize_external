@@ -9,6 +9,10 @@
 				<source><![CDATA[External Calendar]]></source>
 				<target><![CDATA[Externer Kalender]]></target>
 			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.description" approved="yes">
+				<source><![CDATA[Description]]></source>
+				<target><![CDATA[Beschreibung]]></target>
+			</trans-unit>
 			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.ics_url" approved="yes">
 				<source><![CDATA[Ics Url]]></source>
 				<target><![CDATA[Url für iCal/ics-Download]]></target>
