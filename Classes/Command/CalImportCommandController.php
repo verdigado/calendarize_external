@@ -150,14 +150,8 @@ class CalImportCommandController extends Command
             $msgsince = $ignoreBeforeDate->format("d-m-y H:i");
         }
 
-        // @todo get all external calendars from database with icsfile and pid
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($table);
         $queryBuilder = $connection->createQueryBuilder();
-        $queryBuilder->getRestrictions()
-            ->removeByType(StartTimeRestriction::class)
-            ->removeByType(DeletedRestriction::class)
-            ->removeByType(HiddenRestriction::class)
-            ->removeByType(EndTimeRestriction::class);
         $statement = $queryBuilder
             ->select('uid', 'pid', 'title', 'ics_url', 'scheduler_interval', 'last_run', 'last_message')
             ->from($table)
@@ -216,7 +210,6 @@ class CalImportCommandController extends Command
                 // Remove temporary file
                 GeneralUtility::unlink_tempfile($icalFile);
             }
-            // @todo write last run and last message back to record
 
             $io->text('Found ' . \count($events) . ' events in ' . $record['title'] . ' on page ' . $record['pid']);
             $msg .= "Found " . \count($events) . " events. \r\n";
@@ -232,7 +225,6 @@ class CalImportCommandController extends Command
                     ++$skipCount;
                     continue;
                 }
-                // @todo get pid from external calendar record
                 $this->eventDispatcher->dispatch(new ImportSingleIcalEvent($event, $record['pid']));
                 ++$dispatchCount;
                 $io->progressAdvance();
