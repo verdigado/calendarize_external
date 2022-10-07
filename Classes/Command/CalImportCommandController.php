@@ -217,7 +217,7 @@ class CalImportCommandController extends Command
             $io->section('Send ImportSingleIcalEvent for each event');
             $io->progressStart(\count($events));
 
-            $skipCount = $dispatchCount = 0;
+            $skipCount = $dispatchCount = $exceptionCount = 0;
             foreach ($events as $event) {
                 // Skip events before given date, on first run import <= -2 years
                 if (($event->getEndDate() ?? $event->getStartDate()) < $ignoreDate) {
@@ -225,16 +225,29 @@ class CalImportCommandController extends Command
                     ++$skipCount;
                     continue;
                 }
-                $this->eventDispatcher->dispatch(new ImportSingleIcalEvent($event, $record['pid']));
+                try {
+                    $this->eventDispatcher->dispatch(new ImportSingleIcalEvent($event, $record['pid']));
+                } catch (\Exception $e) {
+                    $io->error('Unable to process event:' . $record['pid']);
+                    $io->writeln($e->getMessage());
+                    if ($io->isVerbose()) {
+                        $io->writeln($e->getTraceAsString());
+                    }
+                    ++$exceptionCount;
+                    continue;
+                }
                 ++$dispatchCount;
                 $io->progressAdvance();
             }
             $io->progressFinish();
 
-            $io->text('Dispatched ' . $dispatchCount . ' Events');
-            $io->text('Skipped ' . $skipCount . ' Events');
-            $msg .= "Dispatched $dispatchCount Events\r\n";
-            $msg .= "Skipped  $skipCount Events";
+            $io->text('Dispatched ' . $dispatchCount . ' events');
+            $io->text('Skipped ' . $skipCount . ' events');
+            $msg .= "Dispatched $dispatchCount events\r\n";
+            $msg .= "Skipped  $skipCount events";
+            if ($exceptionCount > 0) {
+                $msg .= "$exceptionCount events had errors";
+            }
             $msg .= (($record['last_run'] == 0) ? " not within last two years (first run only)." : ($msgsince ? " before " . $msgsince : "")) . "\r\n";
             $connection->update(
                 $table,
