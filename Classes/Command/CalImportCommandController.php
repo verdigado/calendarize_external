@@ -198,7 +198,7 @@ class CalImportCommandController extends Command
                 $md5 = md5 ($contents);
             } catch (UnableToGetFileForUrlException $e) {
                 $io->error('Invalid URL: ' . $e->getMessage());
-                $errormsg .= "ical file: invalid url.\r\n";
+                $errormsg .= "ical: invalid url.\r\n";
                 $errorcount++;
                 $connection->update(
                     $table,
