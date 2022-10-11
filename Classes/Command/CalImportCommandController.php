@@ -164,8 +164,10 @@ class CalImportCommandController extends Command
             ->select('uid', 'pid', 'title', 'ics_url', 'scheduler_interval', 'last_run', 'last_message', 'error_count', 'md5')
             ->from($table)
             ->where(
-                $queryBuilder->expr()->gt('scheduler_interval', $queryBuilder->createNamedParameter((int)$schedulemin, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->lte('scheduler_interval', $queryBuilder->createNamedParameter((int)$schedule, \PDO::PARAM_INT))
+                $queryBuilder->expr()->andX(
+                    $queryBuilder->expr()->gt('scheduler_interval', $queryBuilder->createNamedParameter((int)$schedulemin, \PDO::PARAM_INT)),
+                    $queryBuilder->expr()->lte('scheduler_interval', $queryBuilder->createNamedParameter((int)$schedule, \PDO::PARAM_INT))
+                )
             )
             ->execute();
 
@@ -210,6 +212,8 @@ class CalImportCommandController extends Command
             if (!empty($record['md5']) && !empty($md5) && $md5 == $record['md5']
                 && $record['last_run'] != 0) {
                     $io->text('ical file has not been changed (md5) - not importing');
+                // Remove temporary file
+                GeneralUtility::unlink_tempfile($icalFile);
                 continue;
             }
             try {
