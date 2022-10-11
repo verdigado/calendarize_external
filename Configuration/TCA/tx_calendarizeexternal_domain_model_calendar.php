@@ -130,6 +130,16 @@ return [
                 'eval' => 'datetime,int',
             ],
         ],
+        'error_count' => [
+            'exclude' => true,
+            'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_calendar.error_count',
+            'config' => [
+                'eval' => 'int',
+                'renderType' => 'input',
+                'size' => 1,
+                'type' => 'input',
+            ],
+        ],
         'description' => [
             'exclude' => true,
             'label' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_calendar.description',

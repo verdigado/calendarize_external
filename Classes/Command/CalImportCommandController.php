@@ -131,7 +131,15 @@ class CalImportCommandController extends Command
 
         $schedule = $input->getArgument('schedule');
         if (MathUtility::canBeInterpretedAsInteger($schedule)) {
-            $io->text('Run all external calendars which have set schedule to <=' . $schedule . 'h.');
+            $schedulemin = 0;
+            foreach ($this->scheduleRanges as $scheduleRange) {
+                if ($schedule > $scheduleRange) {
+                    $schedulemin = $scheduleRange;
+                } else {
+                    continue 1;
+                }
+            }
+            $io->text('Run all external calendars which have set schedule range between ' . $schedulemin . ' and <=' . $schedule . 'h.');
         } else {
             $io->error('Schedule intervall in hours is missing.');
 
@@ -153,9 +161,10 @@ class CalImportCommandController extends Command
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($table);
         $queryBuilder = $connection->createQueryBuilder();
         $statement = $queryBuilder
-            ->select('uid', 'pid', 'title', 'ics_url', 'scheduler_interval', 'last_run', 'last_message')
+            ->select('uid', 'pid', 'title', 'ics_url', 'scheduler_interval', 'last_run', 'last_message', 'error_count', 'md5')
             ->from($table)
             ->where(
+                $queryBuilder->expr()->gt('scheduler_interval', $queryBuilder->createNamedParameter((int)$schedulemin, \PDO::PARAM_INT)),
                 $queryBuilder->expr()->lte('scheduler_interval', $queryBuilder->createNamedParameter((int)$schedule, \PDO::PARAM_INT))
             )
             ->execute();
@@ -167,26 +176,40 @@ class CalImportCommandController extends Command
             $errormsg = '';
             $now = new \DateTime();
             $lastrun = $now->getTimestamp();
+            $errorcount = $record['error_count'];
+            if ($errorcount > 10) {
+                // do not run, has to be cleared manually in Backend-record
+                $io->warning('Not running: error count is:' . $errorcount );
+                continue;
+            }
             $ignoreDate = $ignoreBeforeDate; // from --since
             if ($record['last_run'] == 0) {
                 $ignoreDate = $ignoreTwoYearsBeforeDate;  // default if not run
             }
 
             // Fetch external URI and write it to a temporary file
-            $io->section('Start to checkout the calendar');
+            $io->section('Start to checkout the calendar ' . $record['uid'] . ' on page: ' . $record['pid']);
 
             try {
                 // get icsCalendarUri from external calendar record
                 $icalFile = $this->iCalUrlService->getOrCreateLocalFileForUrl($record['ics_url']);
+                // @todo create md5 from content
+                $contents = GeneralUtility::getURL($icalFile);
+                $md5 = md5 ($contents);
             } catch (UnableToGetFileForUrlException $e) {
                 $io->error('Invalid URL: ' . $e->getMessage());
                 $errormsg .= "ical file: invalid url.\r\n";
+                $errorcount++;
                 $connection->update(
                     $table,
-                    ['last_message' => "ERROR: \r\n" . $errormsg, 'last_run' => $lastrun],
+                    ['last_message' => "ERROR: \r\n" . $errormsg, 'last_run' => $lastrun, 'error_count' => $errorcount],
                     ['uid' => $record['uid']]
                 );
-
+                continue;
+            }
+            if (!empty($record['md5']) && !empty($md5) && $md5 == $record['md5']
+                && $record['last_run'] != 0) {
+                    $io->text('ical file has not been changed (md5) - not importing');
                 continue;
             }
             try {
@@ -200,9 +223,10 @@ class CalImportCommandController extends Command
                 }
 
                 $errormsg .= 'Unable to process events: ' . $e->getMessage();
+                $errorcount++;
                 $connection->update(
                     $table,
-                    ['last_message' => "ERROR: \r\n" . $errormsg, 'last_run' => $lastrun],
+                    ['last_message' => "ERROR: \r\n" . $errormsg, 'last_run' => $lastrun, 'error_count' => $errorcount],
                     ['uid' => $record['uid']]
                 );
                 continue;
@@ -211,7 +235,7 @@ class CalImportCommandController extends Command
                 GeneralUtility::unlink_tempfile($icalFile);
             }
 
-            $io->text('Found ' . \count($events) . ' events in ' . $record['title'] . ' on page ' . $record['pid']);
+            $io->text('Found ' . \count($events) . ' events in ' . $record['title'] );
             $msg .= "Found " . \count($events) . " events. \r\n";
 
             $io->section('Send ImportSingleIcalEvent for each event');
@@ -247,11 +271,13 @@ class CalImportCommandController extends Command
             $msg .= "Skipped  $skipCount events";
             if ($exceptionCount > 0) {
                 $msg .= "$exceptionCount events had errors";
+                // @todo event errors count as one error ?
+                $errorcount++;
             }
             $msg .= (($record['last_run'] == 0) ? " not within last two years (first run only)." : ($msgsince ? " before " . $msgsince : "")) . "\r\n";
             $connection->update(
                 $table,
-                ['last_message' => $msg, 'last_run' => $lastrun],
+                ['last_message' => $msg, 'last_run' => $lastrun, 'error_count' => $errorcount, 'md5' => $md5],
                 ['uid' => $record['uid']]
             );
 
