@@ -217,6 +217,7 @@ class CalImportCommandController extends Command
                 $events = $this->iCalService->getEvents($icalFile);
             } catch (\Exception $e) {
                 $io->error('Unable to process events');
+                $io->writeln('Url: ' . htmlspecialchars($record['ics_url']));
                 $io->writeln($e->getMessage());
                 if ($io->isVerbose()) {
                     $io->writeln($e->getTraceAsString());
