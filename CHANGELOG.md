@@ -1,3 +1,4 @@
+[TASK] increase version number 2022-10-18 Falko Trojahn
 [BUGFIX] better use AND here  #2922 0aba7c9 2022-10-11 Falko Trojahn
 [TASK] use scheduleRanges, error count, md5 #2922 5caa2c9 2022-10-11 Falko Trojahn
 [BUGFIX] workaround if events trigger a database error #3069 7ad2066 2022-10-07 Falko Trojahn
