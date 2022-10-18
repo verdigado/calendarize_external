@@ -1,0 +1,8 @@
+[BUGFIX] better use AND here  #2922 0aba7c9 2022-10-11 Falko Trojahn
+[TASK] use scheduleRanges, error count, md5 #2922 5caa2c9 2022-10-11 Falko Trojahn
+[BUGFIX] workaround if events trigger a database error #3069 7ad2066 2022-10-07 Falko Trojahn
+[BUGFIX] fix TCA for description field #2922 ab460c3 2022-10-07 Falko Trojahn
+[BUGFIX] do not remove the restrictions at all! #2922 31f5399 2022-10-07 Falko Trojahn
+[BUGFIX] import command: restrict hidden, deleted, start-/endtime #2922 11a95ac 2022-10-06 Alexander Bigga
+[TASK] add language files and missing translations #2922 56c9875 2022-10-04 Falko Trojahn
+[TASK] add option for reindexing #2922 183c763 2022-10-04 Falko Trojahn
