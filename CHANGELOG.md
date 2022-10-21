@@ -1,4 +1,4 @@
-[TASK] increase version number 2022-10-18 Falko Trojahn
+[TASK] increase version number c83f563 2022-10-18 Falko Trojahn
 
 [BUGFIX] better use AND here  #2922 0aba7c9 2022-10-11 Falko Trojahn
 
