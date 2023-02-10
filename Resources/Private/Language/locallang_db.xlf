@@ -21,7 +21,7 @@
 				<source><![CDATA[Time of last run]]></source>
 			</trans-unit>
 			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.error_count">
-				<source><![CDATA[Number of runs with errors, max. 10]]></source>
+				<source><![CDATA[Number of runs with errors, max. 10, reset on save]]></source>
 			</trans-unit>
 			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.note">
 				<source><![CDATA[Note]]></source>
