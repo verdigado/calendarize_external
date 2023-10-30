@@ -13,8 +13,8 @@
 	],
 	"config": {
 		"sort-packages": true,
-		"vendor-dir": ".build/vendor",
-		"bin-dir": ".build/bin",
+		"vendor-dir": ".Build/vendor",
+		"bin-dir": ".Build/bin",
 		"allow-plugins": {
 			"typo3/cms-composer-installers": true,
 			"typo3/class-alias-loader": true
@@ -47,9 +47,9 @@
 			"typo3cms install:fixfolderstructure"
 		],
 		"ddev-symlink-project": [
-			"mkdir -p .build/web/typo3conf/ext",
-			"[ -L .build/web/typo3conf/ext/calendarize_external ] || ln -svnf ../../../../ .build/web/typo3conf/ext/calendarize_external",
-			"[ ! -f .build/web/typo3conf/LocalConfiguration.php ] && touch .build/web/FIRST_INSTALL || exit 0"
+			"mkdir -p .Build/web/typo3conf/ext",
+			"[ -L .Build/web/typo3conf/ext/calendarize_external ] || ln -svnf ../../../../ .Build/web/typo3conf/ext/calendarize_external",
+			"[ ! -f .Build/web/typo3conf/LocalConfiguration.php ] && touch .Build/web/FIRST_INSTALL || exit 0"
 		],
 		"post-autoload-dump": [
 			"@typo3-cms-scripts",
@@ -64,8 +64,8 @@
 	"extra": {
 		"typo3/cms": {
 			"extension-key": "calendarize_external",
-			"web-dir": ".build/web",
-			"app-dir": ".build"
+			"web-dir": ".Build/web",
+			"app-dir": ".Build"
 		}
 	}
 }

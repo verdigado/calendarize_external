@@ -1,6 +1,6 @@
 name: calext
 type: typo3
-docroot: .build/web
+docroot: .Build/web
 php_version: "7.4"
 webserver_type: apache-fpm
 router_http_port: "80"
