@@ -178,6 +178,8 @@ class CalImportCommandController extends Command
             $errormsg = '';
             $now = new \DateTime();
             $lastrun = $now->getTimestamp();
+            $io->section('Start to checkout the calendar ' . $record['uid'] . ' on page: ' . $record['pid']);
+
             $errorcount = $record['error_count'];
             if ($errorcount > 10) {
                 // do not run, has to be cleared manually in Backend-record
@@ -190,8 +192,6 @@ class CalImportCommandController extends Command
             }
 
             // Fetch external URI and write it to a temporary file
-            $io->section('Start to checkout the calendar ' . $record['uid'] . ' on page: ' . $record['pid']);
-
             try {
                 // get icsCalendarUri from external calendar record
                 $icalFile = $this->iCalUrlService->getOrCreateLocalFileForUrl($record['ics_url']);
