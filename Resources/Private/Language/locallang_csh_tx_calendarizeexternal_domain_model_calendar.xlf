@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="EXT:calendarize_external/Resources/Private/Language/locallang_csh_tx_calendarizeexternal_domain_model_calendar.xlf" date="2022-09-26T12:53:40Z" product-name="calendarize_external">
+		<header/>
+		<body>
+			<trans-unit id="title.description" resname="title.description">
+				<source>title</source>
+			</trans-unit>
+			<trans-unit id="ics_url.description" resname="ics_url.description">
+				<source>icsUrl</source>
+			</trans-unit>
+			<trans-unit id="note.description" resname="note.description">
+				<source>note</source>
+			</trans-unit>
+			<trans-unit id="scheduler_interval.description" resname="scheduler_interval.description">
+				<source>scheduler_interval</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

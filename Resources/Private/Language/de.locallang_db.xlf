@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2022-10-04T20:18:28Z">
+		<header>
+			<generator>LFEditor</generator>
+		</header>
+		<body>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar" approved="yes">
+				<source><![CDATA[External Calendar]]></source>
+				<target><![CDATA[Externer Kalender]]></target>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.description" approved="yes">
+				<source><![CDATA[Description]]></source>
+				<target><![CDATA[Beschreibung]]></target>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.ics_url" approved="yes">
+				<source><![CDATA[Ics Url]]></source>
+				<target><![CDATA[Url für iCal/ics-Download]]></target>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.last_message" approved="yes">
+				<source><![CDATA[Last message]]></source>
+				<target><![CDATA[Letztes Ergebnis]]></target>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.last_run" approved="yes">
+				<source><![CDATA[Time of last run]]></source>
+				<target><![CDATA[Zeit letzter Import]]></target>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.error_count" approved="yes">
+				<source><![CDATA[Number of runs with errors, max. 10, reset on save]]></source>
+				<target><![CDATA[Anzahl Ausführungen mit Fehler, max. 10, Reset beim Speichern]]></target>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.note" approved="yes">
+				<source><![CDATA[Note]]></source>
+				<target><![CDATA[Notiz]]></target>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.scheduler_interval" approved="yes">
+				<source><![CDATA[Scheduler Interval]]></source>
+				<target><![CDATA[Planer Häufigkeit in Stunden]]></target>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.title" approved="yes">
+				<source><![CDATA[Title]]></source>
+				<target><![CDATA[Titel]]></target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

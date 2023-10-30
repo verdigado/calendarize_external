@@ -1,0 +1,132 @@
+{
+    "modules": [
+        {
+            "config": {
+                "position": [
+                    417,
+                    238
+                ]
+            },
+            "name": "New Model Object",
+            "value": {
+                "actionGroup": {
+                    "_default0_index": false,
+                    "_default1_list": false,
+                    "_default2_show": false,
+                    "_default3_new_create": false,
+                    "_default4_edit_update": false,
+                    "_default5_delete": false,
+                    "customActions": []
+                },
+                "name": "ExternalCalendar",
+                "objectsettings": {
+                    "addDeletedField": true,
+                    "addHiddenField": true,
+                    "addStarttimeEndtimeFields": true,
+                    "aggregateRoot": false,
+                    "categorizable": false,
+                    "description": "",
+                    "mapToTable": "",
+                    "parentClass": "",
+                    "sorting": false,
+                    "type": "Entity",
+                    "uid": "374064868172"
+                },
+                "propertyGroup": {
+                    "properties": [
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "",
+                            "propertyIsExcludeField": true,
+                            "propertyIsL10nModeExclude": false,
+                            "propertyIsNullable": false,
+                            "propertyIsRequired": false,
+                            "propertyName": "title",
+                            "propertyType": "String",
+                            "uid": "1045739294917"
+                        },
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "",
+                            "propertyIsExcludeField": true,
+                            "propertyIsL10nModeExclude": false,
+                            "propertyIsNullable": false,
+                            "propertyIsRequired": false,
+                            "propertyName": "icsUrl",
+                            "propertyType": "String",
+                            "uid": "1595292052562"
+                        },
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "",
+                            "propertyIsExcludeField": true,
+                            "propertyIsL10nModeExclude": false,
+                            "propertyIsNullable": false,
+                            "propertyIsRequired": false,
+                            "propertyName": "note",
+                            "propertyType": "String",
+                            "uid": "102833072541"
+                        },
+                        {
+                            "allowedFileTypes": "",
+                            "maxItems": "1",
+                            "propertyDescription": "",
+                            "propertyIsExcludeField": true,
+                            "propertyIsL10nModeExclude": false,
+                            "propertyIsNullable": false,
+                            "propertyIsRequired": false,
+                            "propertyName": "scheduler_interval",
+                            "propertyType": "Integer",
+                            "uid": "598775073109"
+                        }
+                    ]
+                },
+                "relationGroup": {
+                    "relations": []
+                }
+            }
+        }
+    ],
+    "properties": {
+        "backendModules": [],
+        "description": "allow editors to create records for external ics imports",
+        "emConf": {
+            "category": "be",
+            "custom_category": "",
+            "dependsOn": "typo3 => 10.4.0-10.4.99\ncalendarize",
+            "disableLocalization": true,
+            "disableVersioning": false,
+            "generateDocumentationTemplate": false,
+            "generateEditorConfig": true,
+            "generateEmptyGitRepository": true,
+            "sourceLanguage": "en",
+            "state": "alpha",
+            "targetVersion": "10.4.0-10.4.99",
+            "version": "0.0.2"
+        },
+        "extensionKey": "calendarize_external",
+        "name": "Calendarize External",
+        "originalExtensionKey": "calendarize_external",
+        "originalVendorName": "Verdigado",
+        "persons": [
+            {
+                "company": "verdigado e.G.",
+                "email": "support@verdigado.net",
+                "name": "Falko Trojahn",
+                "role": "Developer"
+            }
+        ],
+        "plugins": [],
+        "vendorName": "Verdigado"
+    },
+    "wires": [],
+    "storagePath": "\/var\/www\/html\/src\/extensions\/",
+    "log": {
+        "last_modified": "2022-09-26 12:53",
+        "extension_builder_version": "10.0.3",
+        "be_user": "Falko Trojahn (102190)"
+    }
+}

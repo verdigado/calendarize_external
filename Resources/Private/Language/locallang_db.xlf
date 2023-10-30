@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2022-10-04T20:18:28Z">
+		<header>
+			<generator>LFEditor</generator>
+		</header>
+		<body>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar">
+				<source><![CDATA[External Calendar]]></source>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.description">
+				<source><![CDATA[Description]]></source>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.ics_url">
+				<source><![CDATA[Ics Url]]></source>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.last_message">
+				<source><![CDATA[Last message]]></source>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.last_run">
+				<source><![CDATA[Time of last run]]></source>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.error_count">
+				<source><![CDATA[Number of runs with errors, max. 10, reset on save]]></source>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.note">
+				<source><![CDATA[Note]]></source>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.scheduler_interval">
+				<source><![CDATA[Scheduler Interval]]></source>
+			</trans-unit>
+			<trans-unit id="tx_calendarizeexternal_domain_model_calendar.title">
+				<source><![CDATA[Title]]></source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

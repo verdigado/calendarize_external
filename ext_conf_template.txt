@@ -1,0 +1,2 @@
+# cat=Maintenance; type=string; label=set schedule ranges: Set hour ranges for scheduler runs, comma separated like 2,6,12
+scheduleRanges =

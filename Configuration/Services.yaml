@@ -1,0 +1,15 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+  Verdigado\CalendarizeExternal\:
+    resource: '../Classes/*'
+    exclude: '../Classes/Domain/Model/*'
+  Verdigado\CalendarizeExternal\Command\CalImportCommandController:
+    tags:
+      -
+        name: console.command
+        command: 'calendarize-external:cal-import'
+        description: 'Run all external calendar imports'
+        schedulable: true
