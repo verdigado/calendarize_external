@@ -1,3 +1,7 @@
+[BUGFIX] console output shows calendar and pageIds even if not run due to errors d5d778c 2023-10-30 Falko Trojahn
+
+[TASK] tca evaluation class for error_count reset #3679 1f47a1e 2023-02-10 Falko Trojahn
+
 [TASK] increase version number c83f563 2022-10-18 Falko Trojahn
 
 [BUGFIX] better use AND here  #2922 0aba7c9 2022-10-11 Falko Trojahn
