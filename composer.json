@@ -22,7 +22,8 @@
 	},
 	"require": {
 		"lochmueller/calendarize": "^12.4 || @dev",
-		"typo3/cms-core": "^10.4 || ^11.5"
+		"typo3/cms-core": "^10.4 || ^11.5",
+		"typo3/cms-scheduler": "^8.7 || ^10.4 || 11.*.*@dev"
 	},
 	"require-dev": {
 		"helhum/typo3-console": "^v6.7.7 || ^v7.1.6",
