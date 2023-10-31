@@ -1,0 +1,65 @@
+name: Testing calendarize_external
+on: [push, pull_request]
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["7.4", "8.1", "8.2"]
+        typo3: ["10.4","11.5"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer
+          extensions: pdo
+
+      - name: Setup problem matchers
+        run: |
+          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+      - name: Get composer cache directory
+        id: composercache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install the right version
+        run: composer require "typo3/cms-core:^${{ matrix.typo3 }}" "typo3/cms-workspaces:^${{ matrix.typo3 }}" -W
+
+      - name: Unit Tests with phpunit
+        run: composer run tool:phpunit --
+
+      # start db
+      - name: Start MySQL
+        run: sudo /etc/init.d/mysql start
+
+      # functional tests
+      - name: Functional Tests
+        run: |
+          export typo3DatabaseName="typo3";
+          export typo3DatabaseHost="127.0.0.1";
+          export typo3DatabaseUsername="root";
+          export typo3DatabasePassword="root";
+          composer run tool:phpunit:functional --
+
+      - name: Run PHP CS Fixer checks
+        run: composer run tool:php-cs-fixer-check
+
+#      - name: Run DepTrac
+#        run: composer run tool:deptrac
+
+      - name: Reset composer.json
+        run: git checkout composer.json;

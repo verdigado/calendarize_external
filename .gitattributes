@@ -2,3 +2,4 @@
 /Tests export-ignore
 /.* export-ignore
 /ExtensionBuilder.json export-ignore
+/phpstan.neon export-ignore
