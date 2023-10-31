@@ -1,4 +1,5 @@
 <?php
+
 return [
     'ctrl' => [
         'title' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_calendar',
@@ -14,7 +15,7 @@ return [
             'endtime' => 'endtime',
         ],
         'searchFields' => 'title,ics_url,note,last_message',
-        'iconfile' => 'EXT:calendarize_external/Resources/Public/Icons/tx_calendarizeexternal_domain_model_calendar.gif'
+        'iconfile' => 'EXT:calendarize_external/Resources/Public/Icons/tx_calendarizeexternal_domain_model_calendar.gif',
     ],
     'types' => [
         '1' => ['showitem' => 'title, ics_url, note, scheduler_interval, last_run, last_message, error_count,
@@ -32,8 +33,8 @@ return [
                     [
                         0 => '',
                         1 => '',
-                        'invertStateDisplay' => true
-                    ]
+                        'invertStateDisplay' => true,
+                    ],
                 ],
             ],
         ],
@@ -46,8 +47,8 @@ return [
                 'eval' => 'datetime,int',
                 'default' => 0,
                 'behaviour' => [
-                    'allowLanguageSynchronization' => true
-                ]
+                    'allowLanguageSynchronization' => true,
+                ],
             ],
         ],
         'endtime' => [
@@ -59,11 +60,11 @@ return [
                 'eval' => 'datetime,int',
                 'default' => 0,
                 'range' => [
-                    'upper' => mktime(0, 0, 0, 1, 1, 2038)
+                    'upper' => mktime(0, 0, 0, 1, 1, 2038),
                 ],
                 'behaviour' => [
-                    'allowLanguageSynchronization' => true
-                ]
+                    'allowLanguageSynchronization' => true,
+                ],
             ],
         ],
 
@@ -74,7 +75,7 @@ return [
                 'type' => 'input',
                 'size' => 30,
                 'eval' => 'trim',
-                'default' => ''
+                'default' => '',
             ],
         ],
         'ics_url' => [
@@ -84,7 +85,7 @@ return [
                 'type' => 'input',
                 'size' => 30,
                 'eval' => 'trim',
-                'default' => ''
+                'default' => '',
             ],
         ],
         'note' => [
@@ -94,7 +95,7 @@ return [
                 'type' => 'input',
                 'size' => 30,
                 'eval' => 'trim',
-                'default' => ''
+                'default' => '',
             ],
         ],
         'scheduler_interval' => [
@@ -107,8 +108,8 @@ return [
                 'itemsProcFunc' => \Verdigado\CalendarizeExternal\Hooks\ItemsProcFunc::class . '->user_schedulerIntervalSelect',
                 'type' => 'select',
                 'renderType' => 'selectSingle',
-                'size' => 1
-            ]
+                'size' => 1,
+            ],
         ],
         'last_message' => [
             'exclude' => true,
@@ -117,7 +118,7 @@ return [
                 'type' => 'text',
                 'cols' => 30,
                 'rows' => 5,
-                'readOnly' => true
+                'readOnly' => true,
             ],
         ],
         'last_run' => [
@@ -147,9 +148,8 @@ return [
                 'type' => 'text',
                 'cols' => 60,
                 'rows' => 5,
-                'default' => ''
+                'default' => '',
             ],
         ],
-
     ],
 ];

@@ -1,3 +1,5 @@
+[TASK] prepare CI tools 0afd597 2023-10-31 Falko Trojahn
+
 [BUGFIX] console output shows calendar and pageIds even if not run due to errors d5d778c 2023-10-30 Falko Trojahn
 
 [TASK] tca evaluation class for error_count reset #3679 1f47a1e 2023-02-10 Falko Trojahn

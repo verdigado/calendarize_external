@@ -21,16 +21,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
-use TYPO3\CMS\Core\Database\Query\Restriction\EndTimeRestriction;
-use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
-use TYPO3\CMS\Core\Database\Query\Restriction\StartTimeRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
 class CalImportCommandController extends Command
 {
-
     /**
      * @var ICalServiceInterface
      */
@@ -59,17 +54,16 @@ class CalImportCommandController extends Command
     /**
      * ImportCommandController constructor.
      *
-     * @param ICalServiceInterface $iCalService
+     * @param ICalServiceInterface     $iCalService
      * @param EventDispatcherInterface $eventDispatcher
-     * @param IndexerService $indexerService
+     * @param IndexerService           $indexerService
      */
     public function __construct(
-        ICalServiceInterface     $iCalService,
+        ICalServiceInterface $iCalService,
         EventDispatcherInterface $eventDispatcher,
-        IndexerService           $indexerService,
-        ICalUrlService           $iCalUrlService
-    )
-    {
+        IndexerService $indexerService,
+        ICalUrlService $iCalUrlService
+    ) {
         $this->iCalService = $iCalService;
         $this->eventDispatcher = $eventDispatcher;
         $this->indexerService = $indexerService;
@@ -79,11 +73,10 @@ class CalImportCommandController extends Command
             ->get('calendarize_external', 'scheduleRanges');
         $this->scheduleRanges = (explode(',', $scheduleRanges));
         if (empty($this->scheduleRanges[0])) {
-            $this->scheduleRanges = array(2, 6);
+            $this->scheduleRanges = [2, 6];
         }
 
         parent::__construct();
-
     }
 
     protected function configure()
@@ -92,7 +85,7 @@ class CalImportCommandController extends Command
             ->addArgument(
                 'schedule',
                 InputArgument::REQUIRED,
-                "The frequency in hours must be one of: " . implode(',', $this->scheduleRanges) . " \r\n"
+                'The frequency in hours must be one of: ' . implode(',', $this->scheduleRanges) . " \r\n"
                 . "Hint: You can set the schedule ranges in the extension configuration.\r\n"
             )
             ->addOption(
@@ -114,9 +107,9 @@ class CalImportCommandController extends Command
     }
 
     /**
-     * Executes the command to import all external calendars
+     * Executes the command to import all external calendars.
      *
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
      *
      * @return int 0 if everything went fine, or an exit code
@@ -128,7 +121,6 @@ class CalImportCommandController extends Command
         $io = new SymfonyStyle($input, $output);
         $table = 'tx_calendarizeexternal_domain_model_calendar';
 
-
         $schedule = $input->getArgument('schedule');
         if (MathUtility::canBeInterpretedAsInteger($schedule)) {
             $schedulemin = 0;
@@ -136,7 +128,7 @@ class CalImportCommandController extends Command
                 if ($schedule > $scheduleRange) {
                     $schedulemin = $scheduleRange;
                 } else {
-                    continue 1;
+                    continue;
                 }
             }
             $io->text('Run all external calendars which have set schedule range between ' . $schedulemin . ' and <=' . $schedule . 'h.');
@@ -150,12 +142,12 @@ class CalImportCommandController extends Command
         $since = $input->getOption('since');
         $reindex = $input->getOption('reindex');
         $ignoreBeforeDate = null;
-        $ignoreTwoYearsBeforeDate = new \DateTime("-2 years");
+        $ignoreTwoYearsBeforeDate = new \DateTime('-2 years');
         $msgsince = '';
         if (null !== $since) {
-            $ignoreBeforeDate = new \DateTime("-" . ltrim($since, '-'));
+            $ignoreBeforeDate = new \DateTime('-' . ltrim($since, '-'));
             $io->text('Skipping all events before ' . $ignoreBeforeDate->format(\DateTimeInterface::ATOM));
-            $msgsince = $ignoreBeforeDate->format("d-m-y H:i");
+            $msgsince = $ignoreBeforeDate->format('d-m-y H:i');
         }
 
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($table);
@@ -183,11 +175,11 @@ class CalImportCommandController extends Command
             $errorcount = $record['error_count'];
             if ($errorcount > 10) {
                 // do not run, has to be cleared manually in Backend-record
-                $io->warning('Not running: error count is:' . $errorcount );
+                $io->warning('Not running: error count is:' . $errorcount);
                 continue;
             }
             $ignoreDate = $ignoreBeforeDate; // from --since
-            if ($record['last_run'] == 0) {
+            if (0 == $record['last_run']) {
                 $ignoreDate = $ignoreTwoYearsBeforeDate;  // default if not run
             }
 
@@ -197,11 +189,11 @@ class CalImportCommandController extends Command
                 $icalFile = $this->iCalUrlService->getOrCreateLocalFileForUrl($record['ics_url']);
                 // @todo create md5 from content
                 $contents = GeneralUtility::getURL($icalFile);
-                $md5 = md5 ($contents);
+                $md5 = md5($contents);
             } catch (UnableToGetFileForUrlException $e) {
                 $io->error('Invalid URL: ' . $e->getMessage());
                 $errormsg .= "ical: invalid url.\r\n";
-                $errorcount++;
+                ++$errorcount;
                 $connection->update(
                     $table,
                     ['last_message' => "ERROR: \r\n" . $errormsg, 'last_run' => $lastrun, 'error_count' => $errorcount],
@@ -210,8 +202,8 @@ class CalImportCommandController extends Command
                 continue;
             }
             if (!empty($record['md5']) && !empty($md5) && $md5 == $record['md5']
-                && $record['last_run'] != 0) {
-                    $io->text('ical file has not been changed (md5) - not importing');
+                && 0 != $record['last_run']) {
+                $io->text('ical file has not been changed (md5) - not importing');
                 // Remove temporary file
                 GeneralUtility::unlink_tempfile($icalFile);
                 continue;
@@ -228,7 +220,7 @@ class CalImportCommandController extends Command
                 }
 
                 $errormsg .= 'Unable to process events: ' . $e->getMessage();
-                $errorcount++;
+                ++$errorcount;
                 $connection->update(
                     $table,
                     ['last_message' => "ERROR: \r\n" . $errormsg, 'last_run' => $lastrun, 'error_count' => $errorcount],
@@ -240,8 +232,8 @@ class CalImportCommandController extends Command
                 GeneralUtility::unlink_tempfile($icalFile);
             }
 
-            $io->text('Found ' . \count($events) . ' events in ' . $record['title'] );
-            $msg .= "Found " . \count($events) . " events. \r\n";
+            $io->text('Found ' . \count($events) . ' events in ' . $record['title']);
+            $msg .= 'Found ' . \count($events) . " events. \r\n";
 
             $io->section('Send ImportSingleIcalEvent for each event');
             $io->progressStart(\count($events));
@@ -277,15 +269,14 @@ class CalImportCommandController extends Command
             if ($exceptionCount > 0) {
                 $msg .= "$exceptionCount events had errors";
                 // @todo event errors count as one error ?
-                $errorcount++;
+                ++$errorcount;
             }
-            $msg .= (($record['last_run'] == 0) ? " not within last two years (first run only)." : ($msgsince ? " before " . $msgsince : "")) . "\r\n";
+            $msg .= ((0 == $record['last_run']) ? ' not within last two years (first run only).' : ($msgsince ? ' before ' . $msgsince : '')) . "\r\n";
             $connection->update(
                 $table,
                 ['last_message' => $msg, 'last_run' => $lastrun, 'error_count' => $errorcount, 'md5' => $md5],
                 ['uid' => $record['uid']]
             );
-
         }
         // after all calendar imports run reindex events
         if ($reindex) {

@@ -7,7 +7,7 @@ namespace Verdigado\CalendarizeExternal\Tests\Functional;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
- * Test case
+ * Test case.
  *
  * @author Falko Trojahn <support@verdigado.net>
  */
@@ -21,12 +21,10 @@ class BasicTest extends FunctionalTestCase
     ];
 
     /**
-     * Just a dummy to show that at least one test is actually executed
-     *
-     * @test
+     * Just a dummy to show that at least one test is actually executed.
      */
-    public function dummy(): void
+    public function testDummy(): void
     {
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 }
