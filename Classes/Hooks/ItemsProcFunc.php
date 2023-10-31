@@ -8,9 +8,7 @@ namespace Verdigado\CalendarizeExternal\Hooks;
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  */
-// @todo cleanup start
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-// @todo cleanup end
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
