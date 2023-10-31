@@ -1,8 +1,10 @@
-TYPO3 Extension calendarize_external
+# TYPO3 Extension calendarize_external
 
 Extension for TYPO3, calendarize, external calendars for users
 
 ## Features
+
+This TYPO3 extension enables non-admin editors to schedule external calendar imports and get informed about the state of the import.
 
 ## Installation
 
@@ -11,6 +13,8 @@ Simply install the extension with Composer or the [Extension Manager](https://ex
 `composer require verdigado/calendarize-external`
 
 ## Usage
+
+See [Documentation](Documentation/Introduction/Index.rst)
 
 ### ddev local setup
 
@@ -40,3 +44,5 @@ rm -rf .build/ composer.lock
 ```
 
 ## Community
+
+See the [Issues on Github](https://github.com/verdigado/calendarize_external/issues)
