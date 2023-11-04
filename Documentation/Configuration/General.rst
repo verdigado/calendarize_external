@@ -19,7 +19,9 @@ which default to be selectable at 2h or 6h intervals.
 Basic workflow
 =============
 
-*  create an `external calendar record`, specifying the url of
+*  create a new sys_folder within your domain's tree
+
+*  create an `external calendar record` in this sys_folder, specifying the url of
    the ICS file and the frequency of the import
 
 *  (admin only) for each available :ref:`hour range <extensionSettings.scheduleRanges>`,
@@ -35,7 +37,7 @@ Basic workflow
    the events from the corresponding url will be imported to the page, where
    its `external calendar record` exists.
 
-On the first run (i.e. `Time of last run [last_run] is 0`), all events from the last two
+On the first scheduled run (i.e. `Time of last run [last_run] is 0`), all events from the last two
 years will be imported.
 
 On all consecutive runs, events specified by `--since` will be (re)imported, here: last 90 days.
