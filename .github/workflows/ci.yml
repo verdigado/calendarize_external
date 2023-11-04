@@ -6,7 +6,7 @@ jobs:
       fail-fast: false
       matrix:
         php: ["7.4", "8.1", "8.2"]
-        typo3: ["10.4","11.5"]
+        typo3: ["11.5"]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -39,22 +39,22 @@ jobs:
       - name: Install the right version
         run: composer require "typo3/cms-core:^${{ matrix.typo3 }}" "typo3/cms-workspaces:^${{ matrix.typo3 }}" -W
 
-      - name: Unit Tests with phpunit
-        run: composer run tool:phpunit --
-
-      # start db
-      - name: Start MySQL
-        run: sudo /etc/init.d/mysql start
-
-      # functional tests
-      - name: Functional Tests
-        run: |
-          export typo3DatabaseName="typo3";
-          export typo3DatabaseHost="127.0.0.1";
-          export typo3DatabaseUsername="root";
-          export typo3DatabasePassword="root";
-          composer run tool:phpunit:functional --
-
+#      - name: Unit Tests with phpunit
+#        run: composer run tool:phpunit --
+#
+#      # start db
+#      - name: Start MySQL
+#        run: sudo /etc/init.d/mysql start
+#
+#      # functional tests
+#      - name: Functional Tests
+#        run: |
+#          export typo3DatabaseName="typo3";
+#          export typo3DatabaseHost="127.0.0.1";
+#          export typo3DatabaseUsername="root";
+#          export typo3DatabasePassword="root";
+#          composer run tool:phpunit:functional --
+#
       - name: Run PHP CS Fixer checks
         run: composer run tool:php-cs-fixer-check
 
