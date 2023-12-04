@@ -40,6 +40,9 @@ and so on, to be selected by the editors.
     so that all records will be imported into their respective pages.
     For tests or in multi domain environments this is essential.
 
+    This patch is included in the master branch of calendarize (for TYPO3 v12)
+    and in the v11 branch (for TYPO3 v10 and v11).
+
 ..  _screenshots:
 
 Screenshots
