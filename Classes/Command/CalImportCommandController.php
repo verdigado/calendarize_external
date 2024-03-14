@@ -203,7 +203,7 @@ class CalImportCommandController extends Command
                 continue;
             }
             $ignoreDate = $ignoreBeforeDate; // from --since
-            if (0 == $record['last_run']) {
+            if (($force and !empty($usepids)) or (0 == $record['last_run'])) {
                 $ignoreDate = $ignoreTwoYearsBeforeDate;  // default if not run
             }
 
