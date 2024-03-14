@@ -54,15 +54,15 @@ class CalImportCommandController extends Command
     /**
      * ImportCommandController constructor.
      *
-     * @param ICalServiceInterface     $iCalService
+     * @param ICalServiceInterface $iCalService
      * @param EventDispatcherInterface $eventDispatcher
-     * @param IndexerService           $indexerService
+     * @param IndexerService $indexerService
      */
     public function __construct(
-        ICalServiceInterface $iCalService,
+        ICalServiceInterface     $iCalService,
         EventDispatcherInterface $eventDispatcher,
-        IndexerService $indexerService,
-        ICalUrlService $iCalUrlService
+        IndexerService           $indexerService,
+        ICalUrlService           $iCalUrlService
     ) {
         $this->iCalService = $iCalService;
         $this->eventDispatcher = $eventDispatcher;
@@ -97,6 +97,22 @@ class CalImportCommandController extends Command
                 . '(Note: use --since="-x days" syntax on the console)'
             )
             ->addOption(
+                'pid',
+                'p',
+                InputOption::VALUE_OPTIONAL,
+                "Imports events for a given pid.\n"
+                . 'Multiple pages may be comma separated' . "\n"
+                . '(Note: use --pid="20,25" syntax on the console)'
+            )
+            ->addOption(
+                'force',
+                'f',
+                InputOption::VALUE_NONE,
+                "Force import, ignore md5 check of ical file.\n"
+                . "Best combined using -p --pid for certain page. \n"
+                . "Use -f or --force \n"
+            )
+            ->addOption(
                 'reindex',
                 'r',
                 InputOption::VALUE_NONE,
@@ -109,7 +125,7 @@ class CalImportCommandController extends Command
     /**
      * Executes the command to import all external calendars.
      *
-     * @param InputInterface  $input
+     * @param InputInterface $input
      * @param OutputInterface $output
      *
      * @return int 0 if everything went fine, or an exit code
@@ -141,6 +157,11 @@ class CalImportCommandController extends Command
         // Process skip
         $since = $input->getOption('since');
         $reindex = $input->getOption('reindex');
+        $usepids = [];
+        if ($input->getOption('pid')) {
+           $usepids = explode(',', $input->getOption('pid'));
+        }
+        $force = $input->getOption('force') ?? false;
         $ignoreBeforeDate = null;
         $ignoreTwoYearsBeforeDate = new \DateTime('-2 years');
         $msgsince = '';
@@ -161,6 +182,9 @@ class CalImportCommandController extends Command
                     $queryBuilder->expr()->lte('scheduler_interval', $queryBuilder->createNamedParameter((int)$schedule, \PDO::PARAM_INT))
                 )
             )
+            ->andWhere(
+                ' 1 = 1 ' . (!empty($usepids) ? 'AND ' . $queryBuilder->expr()->in('pid', (array)$usepids) : '')
+            )
             ->execute();
 
         // loop thru all external calendars by external calendar record
@@ -179,7 +203,7 @@ class CalImportCommandController extends Command
                 continue;
             }
             $ignoreDate = $ignoreBeforeDate; // from --since
-            if (0 == $record['last_run']) {
+            if (($force and !empty($usepids)) or (0 == $record['last_run'])) {
                 $ignoreDate = $ignoreTwoYearsBeforeDate;  // default if not run
             }
 
@@ -201,7 +225,7 @@ class CalImportCommandController extends Command
                 );
                 continue;
             }
-            if (!empty($record['md5']) && !empty($md5) && $md5 == $record['md5']
+            if (!$force && !empty($record['md5']) && !empty($md5) && $md5 == $record['md5']
                 && 0 != $record['last_run']) {
                 $io->text('ical file has not been changed (md5) - not importing');
                 // Remove temporary file
