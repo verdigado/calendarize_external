@@ -19,6 +19,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -172,6 +173,7 @@ class CalImportCommandController extends Command
         }
 
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($table);
+        $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
         $queryBuilder = $connection->createQueryBuilder();
         $statement = $queryBuilder
             ->select('uid', 'pid', 'title', 'ics_url', 'scheduler_interval', 'last_run', 'last_message', 'error_count', 'md5')
@@ -301,6 +303,7 @@ class CalImportCommandController extends Command
                 ['last_message' => $msg, 'last_run' => $lastrun, 'error_count' => $errorcount, 'md5' => $md5],
                 ['uid' => $record['uid']]
             );
+            $cacheManager->flushCachesByTag('tx_calendarize_domain_model_event_' . $record['pid']);
         }
         // after all calendar imports run reindex events
         if ($reindex) {
