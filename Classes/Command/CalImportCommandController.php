@@ -192,7 +192,7 @@ Best combined using -p --pid for certain page.
             ->execute();
 
         // loop thru all external calendars by external calendar record
-        while ($record = $statement->fetch()) {
+        while ($record = $statement->fetchOne()) {
             // collect messages per record
             $msg = '';
             $errormsg = '';
