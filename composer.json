@@ -1,6 +1,7 @@
 {
     "name": "verdigado/calendarize-external",
     "description": "Calendarize users can create/edit external calendar imports",
+    "license": "GPL-2.0-or-later",
     "type": "typo3-cms-extension",
     "authors": [
         {
@@ -13,29 +14,17 @@
         }
     ],
     "homepage": "https://github.com/verdigado/calendarize_external",
-    "license": "GPL-2.0-or-later",
     "support": {
         "issues": "https://github.com/verdigado/calendarize_external/issues"
     },
-    "config": {
-        "sort-packages": true,
-        "vendor-dir": ".Build/vendor",
-        "bin-dir": ".Build/bin",
-        "allow-plugins": {
-            "typo3/cms-composer-installers": true,
-            "typo3/class-alias-loader": true,
-            "ergebnis/composer-normalize": true,
-            "phpstan/extension-installer": true
-        }
-    },
     "require": {
-        "php": "^7.4||^8.1",
+        "php": "^7.4 || ^8.2",
         "lochmueller/calendarize": "^12.4 || @dev",
         "typo3/cms-core": "^10.4 || ^11.5",
         "typo3/cms-scheduler": "^8.7 || ^10.4 || 11.*.*@dev"
     },
     "require-dev": {
-        "helhum/typo3-console": "^v6.7.7 || ^v7.1.6",
+        "helhum/typo3-console": "^6.7.7 || ^7.1.6",
         "mediatis/typo3-coding-standards": "^2.1",
         "typo3/cms-backend": "^8.7 || ^10.4 || 11.*.*@dev",
         "typo3/cms-belog": "^8.7 || ^10.4 || 11.*.*@dev",
@@ -53,19 +42,42 @@
         "typo3/cms-rte-ckeditor": "^8.7 || ^10.4 || 11.*.*@dev",
         "typo3/cms-tstemplate": "^8.7 || ^10.4 || 11.*.*@dev"
     },
+    "autoload": {
+        "psr-4": {
+            "Verdigado\\CalendarizeExternal\\": "Classes/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "phpstan/extension-installer": true,
+            "typo3/class-alias-loader": true,
+            "typo3/cms-composer-installers": true
+        },
+        "bin-dir": ".Build/bin",
+        "sort-packages": true,
+        "vendor-dir": ".Build/vendor"
+    },
+    "extra": {
+        "typo3/cms": {
+            "app-dir": ".Build",
+            "extension-key": "calendarize_external",
+            "web-dir": ".Build/web"
+        }
+    },
     "scripts": {
-        "typo3-cms-scripts": [
-            "typo3cms install:fixfolderstructure"
+        "post-autoload-dump": [
+            "@typo3-cms-scripts",
+            "@ddev-symlink-project",
+            "TYPO3\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare"
         ],
         "ddev-symlink-project": [
             "mkdir -p .Build/web/typo3conf/ext",
             "[ -L .Build/web/typo3conf/ext/calendarize_external ] || ln -svnf ../../../../ .Build/web/typo3conf/ext/calendarize_external",
             "[ ! -f .Build/web/typo3conf/LocalConfiguration.php ] && touch .Build/web/FIRST_INSTALL || exit 0"
         ],
-        "post-autoload-dump": [
-            "@typo3-cms-scripts",
-            "@ddev-symlink-project",
-            "TYPO3\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare"
+        "typo3-cms-scripts": [
+            "typo3cms install:fixfolderstructure"
         ],
         "ci": [
             "@ci:static",
@@ -185,18 +197,6 @@
             "rm phpstan.neon",
             "rm phpcs.xml"
         ]
-    },
-    "autoload": {
-        "psr-4": {
-            "Verdigado\\CalendarizeExternal\\": "Classes/"
-        }
-    },
-    "extra": {
-        "typo3/cms": {
-            "extension-key": "calendarize_external",
-            "web-dir": ".Build/web",
-            "app-dir": ".Build"
-        }
     },
     "scripts-descriptions": {
         "ci": "Runs all dynamic and static code checks.",
