@@ -1,65 +1,166 @@
-name: Testing calendarize_external
-on: [push, pull_request]
+name: 'Testing calendarize_external'
+'on':
+    0: push
+    1: pull_request
+    push:
+        branches:
+            - main
+            - codingstandards
+    pull_request:
+        branches:
+            - main
 jobs:
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        php: ["7.4", "8.1", "8.2"]
-        typo3: ["10.4","11.5"]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          tools: composer
-          extensions: pdo
-
-      - name: Setup problem matchers
-        run: |
-          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
-          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
-
-      - name: Get composer cache directory
-        id: composercache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache composer dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.composercache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install the right version
-        run: composer require "typo3/cms-core:^${{ matrix.typo3 }}" "typo3/cms-workspaces:^${{ matrix.typo3 }}" -W
-
-      - name: Unit Tests with phpunit
-        run: composer run tool:phpunit --
-
-      # start db
-      - name: Start MySQL
-        run: sudo /etc/init.d/mysql start
-
-      # functional tests
-      - name: Functional Tests
-        run: |
-          export typo3DatabaseName="typo3";
-          export typo3DatabaseHost="127.0.0.1";
-          export typo3DatabaseUsername="root";
-          export typo3DatabasePassword="root";
-          composer run tool:phpunit:functional --
-
-      - name: Run PHP CS Fixer checks
-        run: composer run tool:php-cs-fixer-check
-
-#      - name: Run DepTrac
-#        run: composer run tool:deptrac
-
-      - name: Reset composer.json
-        run: git checkout composer.json;
+    build:
+        strategy:
+            fail-fast: false
+            matrix:
+                php:
+                    - '7.4'
+                    - '8.1'
+                    - '8.2'
+                typo3:
+                    - '10.4'
+                    - '11.5'
+        runs-on: ubuntu-latest
+        steps:
+            -
+                name: Checkout
+                uses: actions/checkout@v3
+            -
+                name: 'Setup PHP'
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '${{ matrix.php }}'
+                    tools: composer
+                    extensions: pdo
+            -
+                name: 'Setup problem matchers'
+                run: "echo \"::add-matcher::${{ runner.tool_cache }}/php.json\"\necho \"::add-matcher::${{ runner.tool_cache }}/phpunit.json\"\n"
+            -
+                name: 'Get composer cache directory'
+                id: composercache
+                run: "echo \"dir=$(composer config cache-files-dir)\" >> $GITHUB_OUTPUT\n"
+            -
+                name: 'Cache composer dependencies'
+                uses: actions/cache@v3
+                with:
+                    path: '${{ steps.composercache.outputs.dir }}'
+                    key: '${{ runner.os }}-composer-${{ hashFiles(''**/composer.lock'') }}'
+                    restore-keys: '${{ runner.os }}-composer-'
+            -
+                name: 'Install the right version'
+                run: 'composer require "typo3/cms-core:^${{ matrix.typo3 }}" "typo3/cms-workspaces:^${{ matrix.typo3 }}" -W'
+            -
+                name: 'Unit Tests with phpunit'
+                run: 'composer run tool:phpunit --'
+            -
+                name: 'Start MySQL'
+                run: 'sudo /etc/init.d/mysql start'
+            -
+                name: 'Functional Tests'
+                run: "export typo3DatabaseName=\"typo3\";\nexport typo3DatabaseHost=\"127.0.0.1\";\nexport typo3DatabaseUsername=\"root\";\nexport typo3DatabasePassword=\"root\";\ncomposer run tool:phpunit:functional --\n"
+            -
+                name: 'Run PHP CS Fixer checks'
+                run: 'composer run tool:php-cs-fixer-check'
+            -
+                name: 'Reset composer.json'
+                run: 'git checkout composer.json;'
+    code-quality:
+        runs-on: ubuntu-22.04
+        strategy:
+            fail-fast: false
+            matrix:
+                php_version:
+                    - '8.1'
+                    - '8.2'
+                typo3_version:
+                    - '11.5'
+        steps:
+            -
+                name: Checkout
+                uses: actions/checkout@v4
+            -
+                name: 'Install PHP'
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '${{ matrix.php_version }}'
+                    coverage: none
+                    tools: 'composer:v2.4'
+            -
+                name: 'Show Composer version'
+                run: 'composer --version'
+            -
+                name: 'Show the Composer configuration'
+                run: 'composer config --global --list'
+            -
+                name: 'Cache dependencies installed with composer'
+                uses: actions/cache@v3
+                with:
+                    key: 'php${{ matrix.php_version }}-typo3${{ matrix.typo3_version }}'
+                    path: ~/.cache/composer
+                    restore-keys: "php${{ matrix.php_version }}-composer-\n"
+            -
+                name: 'Install Composer dependencies'
+                run: "composer require typo3/cms-core ^${{ matrix.typo3_version }} --no-progress\ncomposer install --no-progress\n"
+            -
+                name: 'Run command'
+                run: "composer ci:static\n"
+    code-tests:
+        name: 'Coverage tests'
+        runs-on: ubuntu-22.04
+        env:
+            DB_DATABASE: typo3
+            DB_USER: root
+            DB_PASSWORD: root
+            DB_HOST: localhost
+        steps:
+            -
+                name: Checkout
+                uses: actions/checkout@v4
+            -
+                name: 'Install PHP'
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '${{ matrix.php_version }}'
+                    coverage: none
+                    tools: 'composer:v2.4'
+                    extensions: mysqli
+            -
+                name: 'Show Composer version'
+                run: 'composer --version'
+            -
+                name: 'Show the Composer configuration'
+                run: 'composer config --global --list'
+            -
+                name: 'Cache dependencies installed with composer'
+                uses: actions/cache@v3
+                with:
+                    key: 'php${{ matrix.php_version }}-typo3${{ matrix.php_version }}'
+                    path: ~/.cache/composer
+                    restore-keys: "php${{ matrix.php_version }}-composer-\n"
+            -
+                name: 'Install Composer dependencies'
+                run: "composer require typo3/cms-core ^${{ matrix.typo3_version }} --no-progress\ncomposer install --no-progress\n"
+            -
+                name: 'Start MySQL'
+                run: 'sudo /etc/init.d/mysql start'
+            -
+                run: "export typo3DatabaseName=\"$DB_DATABASE\";\nexport typo3DatabaseHost=\"$DB_HOST\";\nexport typo3DatabaseUsername=\"$DB_USER\";\nexport typo3DatabasePassword=\"$DB_PASSWORD\";\ncomposer ci:coverage\n"
+        strategy:
+            fail-fast: false
+            matrix:
+                php_version: {  }
+                typo3_version: {  }
+    semgrep:
+        name: semgrep
+        runs-on: ubuntu-latest
+        container:
+            image: semgrep/semgrep
+        if: '(github.actor != ''dependabot[bot]'')'
+        steps:
+            -
+                uses: actions/checkout@v4
+            -
+                run: 'semgrep scan --config auto --error'
+permissions:
+    contents: read
