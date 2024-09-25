@@ -7,11 +7,15 @@ declare(strict_types=1);
 
 namespace Verdigado\CalendarizeExternal\Command;
 
+use DateTime;
+use DateTimeInterface;
+use Exception;
 use HDNET\Calendarize\Event\ImportSingleIcalEvent;
 use HDNET\Calendarize\Exception\UnableToGetFileForUrlException;
 use HDNET\Calendarize\Service\Ical\ICalServiceInterface;
 use HDNET\Calendarize\Service\Ical\ICalUrlService;
 use HDNET\Calendarize\Service\IndexerService;
+use PDO;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -24,6 +28,8 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
+
+use function count;
 
 class CalImportCommandController extends Command
 {
@@ -48,22 +54,18 @@ class CalImportCommandController extends Command
     protected $iCalUrlService;
 
     /**
-     * @var ScheduleRanges
+     * @var array<mixed> ScheduleRanges
      */
-    protected $scheduleRanges;
+    protected $scheduleRanges = [];
 
     /**
      * ImportCommandController constructor.
-     *
-     * @param ICalServiceInterface $iCalService
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param IndexerService $indexerService
      */
     public function __construct(
-        ICalServiceInterface     $iCalService,
+        ICalServiceInterface $iCalService,
         EventDispatcherInterface $eventDispatcher,
-        IndexerService           $indexerService,
-        ICalUrlService           $iCalUrlService
+        IndexerService $indexerService,
+        ICalUrlService $iCalUrlService,
     ) {
         $this->iCalService = $iCalService;
         $this->eventDispatcher = $eventDispatcher;
@@ -72,8 +74,8 @@ class CalImportCommandController extends Command
 
         $scheduleRanges = GeneralUtility::makeInstance(ExtensionConfiguration::class)
             ->get('calendarize_external', 'scheduleRanges');
-        $this->scheduleRanges = (explode(',', $scheduleRanges));
-        if (empty($this->scheduleRanges[0])) {
+        $this->scheduleRanges = explode(',', (string)$scheduleRanges);
+        if ($this->scheduleRanges === []) {
             $this->scheduleRanges = [2, 6];
         }
 
@@ -93,24 +95,25 @@ class CalImportCommandController extends Command
                 'since',
                 's',
                 InputOption::VALUE_OPTIONAL,
-                "Imports all events since the given date.\n"
-                . 'Valid PHP date format e.g. "2021-10-01", "-10 days"' . "\n"
+                'Imports all events since the given date.
+Valid PHP date format e.g. "2021-10-01", "-10 days"' . "\n"
                 . '(Note: use --since="-x days" syntax on the console)'
             )
             ->addOption(
                 'pid',
                 'p',
                 InputOption::VALUE_OPTIONAL,
-                "Imports events for a given pid.\n"
-                . 'Multiple pages may be comma separated' . "\n"
+                'Imports events for a given pid.
+Multiple pages may be comma separated' . "\n"
                 . '(Note: use --pid="20,25" syntax on the console)'
             )
             ->addOption(
                 'force',
                 'f',
                 InputOption::VALUE_NONE,
-                "Force import, ignore md5 check of ical file.\n"
-                . "Best combined using -p --pid for certain page. \n"
+                'Force import, ignore md5 check of ical file.
+Best combined using -p --pid for certain page.
+'
                 . "Use -f or --force \n"
             )
             ->addOption(
@@ -126,12 +129,9 @@ class CalImportCommandController extends Command
     /**
      * Executes the command to import all external calendars.
      *
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
      * @return int 0 if everything went fine, or an exit code
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -148,6 +148,7 @@ class CalImportCommandController extends Command
                     continue;
                 }
             }
+
             $io->text('Run all external calendars which have set schedule range between ' . $schedulemin . ' and <=' . $schedule . 'h.');
         } else {
             $io->error('Schedule intervall in hours is missing.');
@@ -157,18 +158,19 @@ class CalImportCommandController extends Command
 
         // Process skip
         $since = $input->getOption('since');
-        $reindex = $input->getOption('reindex');
+        $reindex = (bool)$input->getOption('reindex');
         $usepids = [];
-        if ($input->getOption('pid')) {
-           $usepids = explode(',', $input->getOption('pid'));
+        if ($input->getOption('pid') !== false) {
+            $usepids = explode(',', (string)$input->getOption('pid'));
         }
-        $force = $input->getOption('force') ?? false;
+
+        $force = (bool)$input->getOption('force');
         $ignoreBeforeDate = null;
-        $ignoreTwoYearsBeforeDate = new \DateTime('-2 years');
+        $ignoreTwoYearsBeforeDate = new DateTime('-2 years');
         $msgsince = '';
         if (null !== $since) {
-            $ignoreBeforeDate = new \DateTime('-' . ltrim($since, '-'));
-            $io->text('Skipping all events before ' . $ignoreBeforeDate->format(\DateTimeInterface::ATOM));
+            $ignoreBeforeDate = new DateTime('-' . ltrim((string)$since, '-'));
+            $io->text('Skipping all events before ' . $ignoreBeforeDate->format(DateTimeInterface::ATOM));
             $msgsince = $ignoreBeforeDate->format('d-m-y H:i');
         }
 
@@ -180,12 +182,12 @@ class CalImportCommandController extends Command
             ->from($table)
             ->where(
                 $queryBuilder->expr()->andX(
-                    $queryBuilder->expr()->gt('scheduler_interval', $queryBuilder->createNamedParameter((int)$schedulemin, \PDO::PARAM_INT)),
-                    $queryBuilder->expr()->lte('scheduler_interval', $queryBuilder->createNamedParameter((int)$schedule, \PDO::PARAM_INT))
+                    $queryBuilder->expr()->gt('scheduler_interval', $queryBuilder->createNamedParameter($schedulemin, PDO::PARAM_INT)),
+                    $queryBuilder->expr()->lte('scheduler_interval', $queryBuilder->createNamedParameter((int)$schedule, PDO::PARAM_INT))
                 )
             )
             ->andWhere(
-                ' 1 = 1 ' . (!empty($usepids) ? 'AND ' . $queryBuilder->expr()->in('pid', (array)$usepids) : '')
+                ' 1 = 1 ' . ($usepids === [] ? '' : 'AND ' . $queryBuilder->expr()->in('pid', $usepids))
             )
             ->execute();
 
@@ -194,7 +196,7 @@ class CalImportCommandController extends Command
             // collect messages per record
             $msg = '';
             $errormsg = '';
-            $now = new \DateTime();
+            $now = new DateTime();
             $lastrun = $now->getTimestamp();
             $io->section('Start to checkout the calendar ' . $record['uid'] . ' on page: ' . $record['pid']);
 
@@ -204,8 +206,9 @@ class CalImportCommandController extends Command
                 $io->warning('Not running: error count is:' . $errorcount);
                 continue;
             }
+
             $ignoreDate = $ignoreBeforeDate; // from --since
-            if (($force and !empty($usepids)) or (0 == $record['last_run'])) {
+            if ($force && $usepids !== [] || 0 == $record['last_run']) {
                 $ignoreDate = $ignoreTwoYearsBeforeDate;  // default if not run
             }
 
@@ -214,8 +217,8 @@ class CalImportCommandController extends Command
                 // get icsCalendarUri from external calendar record
                 $icalFile = $this->iCalUrlService->getOrCreateLocalFileForUrl($record['ics_url']);
                 // @todo create md5 from content
-                $contents = GeneralUtility::getURL($icalFile);
-                $md5 = md5($contents);
+                $contents = GeneralUtility::getUrl($icalFile);
+                $md5 = md5((string)$contents);
             } catch (UnableToGetFileForUrlException $e) {
                 $io->error('Invalid URL: ' . $e->getMessage());
                 $errormsg .= "ical: invalid url.\r\n";
@@ -227,19 +230,21 @@ class CalImportCommandController extends Command
                 );
                 continue;
             }
-            if (!$force && !empty($record['md5']) && !empty($md5) && $md5 == $record['md5']
+
+            if (!$force && isset($record['md5']) && $record['md5'] !== '' && $md5 !== '' && $md5 == $record['md5']
                 && 0 != $record['last_run']) {
                 $io->text('ical file has not been changed (md5) - not importing');
                 // Remove temporary file
                 GeneralUtility::unlink_tempfile($icalFile);
                 continue;
             }
+
             try {
                 // Parse calendar
                 $events = $this->iCalService->getEvents($icalFile);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $io->error('Unable to process events');
-                $io->writeln('Url: ' . htmlspecialchars($record['ics_url']));
+                $io->writeln('Url: ' . htmlspecialchars((string)$record['ics_url']));
                 $io->writeln($e->getMessage());
                 if ($io->isVerbose()) {
                     $io->writeln($e->getTraceAsString());
@@ -258,13 +263,14 @@ class CalImportCommandController extends Command
                 GeneralUtility::unlink_tempfile($icalFile);
             }
 
-            $io->text('Found ' . \count($events) . ' events in ' . $record['title']);
-            $msg .= 'Found ' . \count($events) . " events. \r\n";
+            $io->text('Found ' . count($events) . ' events in ' . $record['title']);
+            $msg .= 'Found ' . count($events) . " events. \r\n";
 
             $io->section('Send ImportSingleIcalEvent for each event');
-            $io->progressStart(\count($events));
-
-            $skipCount = $dispatchCount = $exceptionCount = 0;
+            $io->progressStart(count($events));
+            $skipCount = 0;
+            $dispatchCount = 0;
+            $exceptionCount = 0;
             foreach ($events as $event) {
                 // Skip events before given date, on first run import <= -2 years
                 if (($event->getEndDate() ?? $event->getStartDate()) < $ignoreDate) {
@@ -272,32 +278,37 @@ class CalImportCommandController extends Command
                     ++$skipCount;
                     continue;
                 }
+
                 try {
                     $this->eventDispatcher->dispatch(new ImportSingleIcalEvent($event, $record['pid']));
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $io->error('Unable to process event:' . $record['pid']);
                     $io->writeln($e->getMessage());
                     if ($io->isVerbose()) {
                         $io->writeln($e->getTraceAsString());
                     }
+
                     ++$exceptionCount;
                     continue;
                 }
+
                 ++$dispatchCount;
                 $io->progressAdvance();
             }
+
             $io->progressFinish();
 
             $io->text('Dispatched ' . $dispatchCount . ' events');
             $io->text('Skipped ' . $skipCount . ' events');
-            $msg .= "Dispatched $dispatchCount events\r\n";
-            $msg .= "Skipped  $skipCount events";
+            $msg .= "Dispatched {$dispatchCount} events\r\n";
+            $msg .= sprintf('Skipped  %d events', $skipCount);
             if ($exceptionCount > 0) {
-                $msg .= "$exceptionCount events had errors";
+                $msg .= sprintf('%d events had errors', $exceptionCount);
                 // @todo event errors count as one error ?
                 ++$errorcount;
             }
-            $msg .= ((0 == $record['last_run']) ? ' not within last two years (first run only).' : ($msgsince ? ' before ' . $msgsince : '')) . "\r\n";
+
+            $msg .= ((0 == $record['last_run']) ? ' not within last two years (first run only).' : ($msgsince !== '' && $msgsince !== '0' ? ' before ' . $msgsince : '')) . "\r\n";
             $connection->update(
                 $table,
                 ['last_message' => $msg, 'last_run' => $lastrun, 'error_count' => $errorcount, 'md5' => $md5],
@@ -305,6 +316,7 @@ class CalImportCommandController extends Command
             );
             $cacheManager->flushCachesByTag('tx_calendarize_domain_model_event_' . $record['pid']);
         }
+
         // after all calendar imports run reindex events
         if ($reindex) {
             $io->section('Running reindex process after import');

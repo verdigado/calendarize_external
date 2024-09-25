@@ -25,10 +25,11 @@ class ItemsProcFunc
     {
         $setting = GeneralUtility::makeInstance(ExtensionConfiguration::class)
             ->get('calendarize_external', 'scheduleRanges');
-        $items = (explode(',', $setting));
-        if (empty($items[0])) {
+        $items = explode(',', (string)$setting);
+        if ($items == []) {
             $items = [2, 6];
         }
+
         foreach ($items as $item) {
             $params['items'][] = [$item . 'h', $item];
         }

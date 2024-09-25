@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Verdigado\CalendarizeExternal\Command;
 
+use PDO;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -16,16 +17,16 @@ use TYPO3\CMS\Core\Utility\MathUtility;
 
 class ResetLastrunCommand extends Command
 {
-
     protected $scheduleRanges;
 
-    public function __construct() {
-
+    public function __construct()
+    {
         $this->scheduleRanges = GeneralUtility::makeInstance(ExtensionConfiguration::class)
             ->get('calendarize_external', 'scheduleRanges');
-        if (empty($this->scheduleRanges)) {
-            $this->scheduleRanges = "2,6";
+        if ($this->scheduleRanges == '') {
+            $this->scheduleRanges = '2,6';
         }
+
         parent::__construct();
     }
 
@@ -49,11 +50,12 @@ class ResetLastrunCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $useschedule = null;
         $io = new SymfonyStyle($input, $output);
         $table = 'tx_calendarizeexternal_domain_model_calendar';
 
         $schedule = $input->getOption('schedule');
-        $scheduleRanges = (explode(',', $this->scheduleRanges));
+        $scheduleRanges = explode(',', (string)$this->scheduleRanges);
         if (MathUtility::canBeInterpretedAsInteger($schedule)) {
             $useschedule = 0;
             foreach ($scheduleRanges as $scheduleRange) {
@@ -63,32 +65,34 @@ class ResetLastrunCommand extends Command
                     continue;
                 }
             }
+
             if ($useschedule > 0) {
-              $io->text('Reset only external calendars with schedule range ' . $useschedule . 'h.');
+                $io->text('Reset only external calendars with schedule range ' . $useschedule . 'h.');
             } else {
-              $io->error('Wrong schedule, use one of ' . $this->scheduleRanges . ' or omit this parameter.');
-              return 1;
+                $io->error('Wrong schedule, use one of ' . $this->scheduleRanges . ' or omit this parameter.');
+
+                return 1;
             }
         }
 
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($table);
         $queryBuilder = $connection->createQueryBuilder();
 
-        $constraints = $queryBuilder->expr()->lt('error_count', $queryBuilder->createNamedParameter("11", \PDO::PARAM_INT));
+        $constraints = $queryBuilder->expr()->lt('error_count', $queryBuilder->createNamedParameter('11', PDO::PARAM_INT));
 
         $pages = $input->getOption('pages');
-        if (!empty($pages)) {
-            $constraints .= ' AND ' . $queryBuilder->expr()->in('pid', $queryBuilder->createNamedParameter($pages, \PDO::PARAM_STR));
+        if ($pages !== false && $pages !== '') {
+            $constraints .= ' AND ' . $queryBuilder->expr()->in('pid', $queryBuilder->createNamedParameter($pages, PDO::PARAM_STR));
         }
 
         if ($useschedule > 0) {
-            $constraints .= ' AND ' . $queryBuilder->expr()->eq('scheduler_interval', $queryBuilder->createNamedParameter((int)$useschedule, \PDO::PARAM_INT));
+            $constraints .= ' AND ' . $queryBuilder->expr()->eq('scheduler_interval', $queryBuilder->createNamedParameter((int)$useschedule, PDO::PARAM_INT));
         }
 
         $statement = $queryBuilder
             ->select('uid')
             ->from($table)
-            ->where( $constraints )
+            ->where($constraints)
             ->execute();
 
         // loop thru all external calendar records
@@ -102,7 +106,9 @@ class ResetLastrunCommand extends Command
             );
             ++$extcalcount;
         }
+
         $io->text('Successful reset of ' . $extcalcount . ' external calendar(s).');
+
         return 0;
     }
 }

@@ -13,10 +13,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 class BasicTest extends FunctionalTestCase
 {
-    /**
-     * @var array
-     */
-    protected $testExtensionsToLoad = [
+    protected array $testExtensionsToLoad = [
         'typo3conf/ext/calendarize_external',
     ];
 

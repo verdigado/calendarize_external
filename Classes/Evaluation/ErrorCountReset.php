@@ -14,7 +14,7 @@ class ErrorCountReset
      *
      * @return string JavaScript code for client side validation/evaluation
      */
-    public function returnFieldJS()
+    public function returnFieldJS(): string
     {
         return 'return value + " [added by JavaScript on field blur]";';
     }
@@ -28,7 +28,7 @@ class ErrorCountReset
      *
      * @return string Evaluated field value
      */
-    public function evaluateFieldValue($value, $is_in, &$set)
+    public function evaluateFieldValue($value, $is_in, &$set): int
     {
         return 0;
     }

@@ -1,5 +1,7 @@
 <?php
 
-defined('TYPO3_MODE') || exit();
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile('calendarize_external', 'Configuration/TypoScript', 'Calendarize External');
+defined('TYPO3') || exit;
+
+ExtensionManagementUtility::addStaticFile('calendarize_external', 'Configuration/TypoScript', 'Calendarize External');

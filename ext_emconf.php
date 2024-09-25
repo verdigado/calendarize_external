@@ -7,7 +7,6 @@ $EM_CONF[$_EXTKEY] = [
     'author' => 'Falko Trojahn',
     'author_email' => 'support@verdigado.net',
     'state' => 'alpha',
-    'clearCacheOnLoad' => 0,
     'version' => '0.1.2',
     'constraints' => [
         'depends' => [
