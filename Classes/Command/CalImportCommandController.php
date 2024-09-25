@@ -74,15 +74,12 @@ class CalImportCommandController extends Command
 
         $scheduleRanges = GeneralUtility::makeInstance(ExtensionConfiguration::class)
             ->get('calendarize_external', 'scheduleRanges');
-        $this->scheduleRanges = explode(',', (string)$scheduleRanges);
-        if ($this->scheduleRanges == []) {
-            $this->scheduleRanges = [2, 6];
-        }
+        $this->scheduleRanges = $scheduleRanges == '' ? [2, 6] : explode(',', (string)$scheduleRanges);
 
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Run all external calendar imports')
             ->addArgument(

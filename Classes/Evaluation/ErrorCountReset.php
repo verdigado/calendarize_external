@@ -36,7 +36,7 @@ class ErrorCountReset
     /**
      * Server-side validation/evaluation on opening the record.
      *
-     * @param array $parameters Array with key 'value' containing the field value from the database
+     * @param array<string, mixed> $parameters Array with key 'value' containing the field value from the database
      *
      * @return string Evaluated field value
      */

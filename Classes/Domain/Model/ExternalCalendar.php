@@ -65,7 +65,7 @@ class ExternalCalendar extends AbstractEntity
     /**
      * Sets the title.
      */
-    public function setTitle(string $title)
+    public function setTitle(string $title): void
     {
         $this->title = $title;
     }
@@ -83,7 +83,7 @@ class ExternalCalendar extends AbstractEntity
     /**
      * Sets the icsUrl.
      */
-    public function setIcsUrl(string $icsUrl)
+    public function setIcsUrl(string $icsUrl): void
     {
         $this->icsUrl = $icsUrl;
     }
@@ -101,7 +101,7 @@ class ExternalCalendar extends AbstractEntity
     /**
      * Sets the note.
      */
-    public function setNote(string $note)
+    public function setNote(string $note): void
     {
         $this->note = $note;
     }
@@ -119,7 +119,7 @@ class ExternalCalendar extends AbstractEntity
     /**
      * Sets the scheduler_interval.
      */
-    public function setSchedulerInterval(int $scheduler_interval)
+    public function setSchedulerInterval(int $scheduler_interval): void
     {
         $this->scheduler = $scheduler_interval;
     }

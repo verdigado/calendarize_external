@@ -17,7 +17,7 @@ use TYPO3\CMS\Core\Utility\MathUtility;
 
 class ResetLastrunCommand extends Command
 {
-    protected $scheduleRanges;
+    protected string $scheduleRanges;
 
     public function __construct()
     {
@@ -55,7 +55,7 @@ class ResetLastrunCommand extends Command
         $table = 'tx_calendarizeexternal_domain_model_calendar';
 
         $schedule = $input->getOption('schedule');
-        $scheduleRanges = explode(',', (string)$this->scheduleRanges);
+        $scheduleRanges = explode(',', $this->scheduleRanges);
         if (MathUtility::canBeInterpretedAsInteger($schedule)) {
             $useschedule = 0;
             foreach ($scheduleRanges as $scheduleRange) {
