@@ -75,7 +75,7 @@ class CalImportCommandController extends Command
         $scheduleRanges = GeneralUtility::makeInstance(ExtensionConfiguration::class)
             ->get('calendarize_external', 'scheduleRanges');
         $this->scheduleRanges = explode(',', (string)$scheduleRanges);
-        if ($this->scheduleRanges === []) {
+        if ($this->scheduleRanges == []) {
             $this->scheduleRanges = [2, 6];
         }
 
@@ -231,7 +231,10 @@ Best combined using -p --pid for certain page.
                 continue;
             }
 
-            if (!$force && isset($record['md5']) && $record['md5'] !== '' && $md5 !== '' && $md5 == $record['md5']
+            if (!$force
+                && isset($record['md5'])
+                && $record['md5'] != ''
+                && $md5 == $record['md5']
                 && 0 != $record['last_run']) {
                 $io->text('ical file has not been changed (md5) - not importing');
                 // Remove temporary file
