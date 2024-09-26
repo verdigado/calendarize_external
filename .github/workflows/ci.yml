@@ -1,7 +1,5 @@
 name: 'Testing calendarize_external'
-'on':
-    0: push
-    1: pull_request
+on:
     push:
         branches:
             - main
