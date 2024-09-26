@@ -97,7 +97,7 @@ class ResetLastrunCommand extends Command
 
         // loop thru all external calendar records
         $extcalcount = 0;
-        while ($record = $statement->fetchOne()) {
+        while ($record = $statement->fetchAssociative()) {
             // reset record
             $connection->update(
                 $table,
