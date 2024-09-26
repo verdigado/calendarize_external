@@ -146,8 +146,10 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php_version: {  }
-                typo3_version: {  }
+                php_version:
+                  - '8.2'
+                typo3_version:
+                  - '11.5'
     semgrep:
         name: semgrep
         runs-on: ubuntu-latest
