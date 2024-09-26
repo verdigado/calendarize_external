@@ -157,7 +157,7 @@ Best combined using -p --pid for certain page.
         $since = $input->getOption('since');
         $reindex = (bool)$input->getOption('reindex');
         $usepids = [];
-        if ($input->getOption('pid') !== false) {
+        if (null !== $input->getOption('pid')) {
             $usepids = explode(',', (string)$input->getOption('pid'));
         }
 
