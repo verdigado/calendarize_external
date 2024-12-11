@@ -1,4 +1,12 @@
-[TASK] add ResetLastrun command #4567 2023-12-07 Falko Trojahn
+[TASK] exclude calendar runs on hidden page (trees) #6399 2024-12-11 Falko Trojahn
+
+[BUGFIX] reset error_count using -f  #6399 8f9936b 2024-12-11 Falko Trojahn
+
+[TASK] clear cachetags on ics import per page #6015 087f057 2024-08-21 Falko Trojahn
+
+[TASK] add pid and force cli options #5281 102280b 2024-03-13 Falko Trojahn
+
+[TASK] add ResetLastrun command #4567 d1b729f 2023-12-07 Falko Trojahn
 
 [TASK] documentation about upstream v11 branch 49cbb16 2023-12-04 Falko Trojahn
 

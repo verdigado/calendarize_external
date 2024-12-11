@@ -24,6 +24,7 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
+use TYPO3\CMS\Core\Utility\RootlineUtility;
 
 class CalImportCommandController extends Command
 {
@@ -138,6 +139,7 @@ class CalImportCommandController extends Command
         $io = new SymfonyStyle($input, $output);
         $table = 'tx_calendarizeexternal_domain_model_calendar';
 
+        $usepids = [];
         $schedule = $input->getArgument('schedule');
         if (MathUtility::canBeInterpretedAsInteger($schedule)) {
             $schedulemin = 0;
@@ -148,7 +150,12 @@ class CalImportCommandController extends Command
                     continue;
                 }
             }
-            $io->text('Run all external calendars which have set schedule range between ' . $schedulemin . ' and <=' . $schedule . 'h.');
+            if ($pids = $input->getOption('pid')) {
+                $usepids = explode(',', $pids);
+                $io->text('Run calendars on page(s) ' . $pids . ' which have set schedule range between ' . $schedulemin . ' and <=' . $schedule . 'h, not on hidden pages.');
+            } else {
+                $io->text('Run all external calendars which have set schedule range between ' . $schedulemin . ' and <=' . $schedule . 'h, not on hidden pages.');
+            }
         } else {
             $io->error('Schedule intervall in hours is missing.');
 
@@ -158,10 +165,6 @@ class CalImportCommandController extends Command
         // Process skip
         $since = $input->getOption('since');
         $reindex = $input->getOption('reindex');
-        $usepids = [];
-        if ($input->getOption('pid')) {
-           $usepids = explode(',', $input->getOption('pid'));
-        }
         $force = $input->getOption('force') ?? false;
         $ignoreBeforeDate = null;
         $ignoreTwoYearsBeforeDate = new \DateTime('-2 years');
@@ -198,6 +201,22 @@ class CalImportCommandController extends Command
             $lastrun = $now->getTimestamp();
             $io->section('Start to checkout the calendar ' . $record['uid'] . ' on page: ' . $record['pid']);
 
+            $rootLineUtility = new RootlineUtility($record['pid']);
+            $rootline = $rootLineUtility->get();
+            $hiddenpage = false;
+            foreach ($rootline as $page) {
+                if ($page['hidden'] == 1) {
+                    $hiddenpage = $page['uid'];
+                    break;
+                }
+                if ($page['is_siteroot']) {
+                    break;
+                }
+            }
+            if ( $hiddenpage ) {
+                $io->warning('Not running: record is ' . ($hiddenpage == $record['pid'] ? "on" : "under" ) . " hidden page " . $hiddenpage . ".");
+                continue;
+            }
             $errorcount = $record['error_count'];
             if ($errorcount > 10) {
                 // do not run, has to be cleared manually in Backend-record
