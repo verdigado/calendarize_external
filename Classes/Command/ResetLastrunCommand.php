@@ -33,6 +33,13 @@ class ResetLastrunCommand extends Command
     {
         $this->setDescription('Set last_run fields to zero')
             ->addOption(
+                'force',
+                'f',
+                InputOption::VALUE_NONE,
+                "Force reset, ignore error_count > 10.\n"
+                . "Use -f or --force \n"
+            )
+            ->addOption(
                 'schedule',
                 's',
                 InputOption::VALUE_OPTIONAL,
@@ -52,6 +59,7 @@ class ResetLastrunCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $table = 'tx_calendarizeexternal_domain_model_calendar';
 
+        $force = $input->getOption('force') ?? false;
         $schedule = $input->getOption('schedule');
         $scheduleRanges = (explode(',', $this->scheduleRanges));
         if (MathUtility::canBeInterpretedAsInteger($schedule)) {
@@ -74,7 +82,11 @@ class ResetLastrunCommand extends Command
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($table);
         $queryBuilder = $connection->createQueryBuilder();
 
-        $constraints = $queryBuilder->expr()->lt('error_count', $queryBuilder->createNamedParameter("11", \PDO::PARAM_INT));
+        if ($force) {
+            $constraints = "1 = 1";
+        } else {
+            $constraints = $queryBuilder->expr()->lt('error_count', $queryBuilder->createNamedParameter("11", \PDO::PARAM_INT));
+        }
 
         $pages = $input->getOption('pages');
         if (!empty($pages)) {
