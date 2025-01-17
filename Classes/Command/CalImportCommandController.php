@@ -152,9 +152,9 @@ class CalImportCommandController extends Command
             }
             if ($pids = $input->getOption('pid')) {
                 $usepids = explode(',', $pids);
-                $io->text('Run calendars on page(s) ' . $pids . ' which have set schedule range between ' . $schedulemin . ' and <=' . $schedule . 'h, not on hidden pages.');
+                $io->text('Run calendars on page(s) ' . $pids . ' which have set schedule range between ' . $schedulemin . ' and <=' . $schedule . 'h, not on hidden or deleted pages.');
             } else {
-                $io->text('Run all external calendars which have set schedule range between ' . $schedulemin . ' and <=' . $schedule . 'h, not on hidden pages.');
+                $io->text('Run all external calendars which have set schedule range between ' . $schedulemin . ' and <=' . $schedule . 'h, not on hidden or deleted pages.');
             }
         } else {
             $io->error('Schedule intervall in hours is missing.');
@@ -204,7 +204,12 @@ class CalImportCommandController extends Command
             $rootLineUtility = new RootlineUtility($record['pid']);
             $rootline = $rootLineUtility->get();
             $hiddenpage = false;
+            $deletedpage = false;
             foreach ($rootline as $page) {
+                if ($page['deleted'] == 1) {
+                    $deletedpage = $page['uid'];
+                    break;
+                }
                 if ($page['hidden'] == 1) {
                     $hiddenpage = $page['uid'];
                     break;
@@ -213,7 +218,11 @@ class CalImportCommandController extends Command
                     break;
                 }
             }
-            if ( $hiddenpage ) {
+            if ($deletedpage) {
+                $io->warning('Not running: record is ' . ($deletedpage == $record['pid'] ? "on" : "under") . " deleted page " . $deletedpage . ".");
+                continue;
+            }
+            if ($hiddenpage) {
                 $io->warning('Not running: record is ' . ($hiddenpage == $record['pid'] ? "on" : "under" ) . " hidden page " . $hiddenpage . ".");
                 continue;
             }
