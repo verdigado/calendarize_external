@@ -192,6 +192,7 @@ class CalImportCommandController extends Command
             )
             ->execute();
 
+        $pageQueryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
         // loop thru all external calendars by external calendar record
         while ($record = $statement->fetch()) {
             // collect messages per record
@@ -202,19 +203,35 @@ class CalImportCommandController extends Command
             $io->section('Start to checkout the calendar ' . $record['uid'] . ' on page: ' . $record['pid']);
 
             $rootLineUtility = new RootlineUtility($record['pid']);
-            $rootline = $rootLineUtility->get();
+            try {
+                $rootline = $rootLineUtility->get();
+            }
+            catch ( \Exception $e) {
+                $io->warning("Not running: record is on deleted page " . $record['pid'] . ".");
+                break;
+            }
             $hiddenpage = false;
             $deletedpage = false;
             foreach ($rootline as $page) {
-                if ($page['deleted'] == 1) {
+                $pageQueryBuilder->getRestrictions()
+                    ->removeAll();
+                $pageQueryBuilder
+                    ->select('uid', 'deleted', 'hidden', 'is_siteroot')
+                    ->from('pages')
+                    ->where(
+                        $pageQueryBuilder->expr()->eq('uid', $pageQueryBuilder->createNamedParameter($page['uid'], \PDO::PARAM_INT))
+                    );
+
+                $pages = $pageQueryBuilder->execute()->fetch(0);
+                if ($pages['deleted'] == 1) {
                     $deletedpage = $page['uid'];
                     break;
                 }
-                if ($page['hidden'] == 1) {
+                if ($pages['hidden'] == 1) {
                     $hiddenpage = $page['uid'];
                     break;
                 }
-                if ($page['is_siteroot']) {
+                if ($pages['is_siteroot']) {
                     break;
                 }
             }
