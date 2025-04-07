@@ -1,5 +1,7 @@
 <?php
 
+use Verdigado\CalendarizeExternal\Hooks\ItemsProcFunc;
+
 return [
     'ctrl' => [
         'title' => 'LLL:EXT:calendarize_external/Resources/Private/Language/locallang_db.xlf:tx_calendarizeexternal_domain_model_calendar',
@@ -105,7 +107,7 @@ return [
             'config' => [
                 'default' => 6,
                 'eval' => 'int',
-                'itemsProcFunc' => \Verdigado\CalendarizeExternal\Hooks\ItemsProcFunc::class . '->user_schedulerIntervalSelect',
+                'itemsProcFunc' => ItemsProcFunc::class . '->schedulerIntervalSelect',
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'size' => 1,

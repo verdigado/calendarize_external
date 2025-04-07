@@ -18,10 +18,8 @@ class ItemsProcFunc
 {
     /**
      * Generate a select box of schedule hour ranges to select.
-     *
-     * @param array $params
      */
-    public function user_schedulerIntervalSelect(&$params): void
+    public function schedulerIntervalSelect(array &$params): void
     {
         $setting = GeneralUtility::makeInstance(ExtensionConfiguration::class)
             ->get('calendarize_external', 'scheduleRanges');
@@ -29,6 +27,7 @@ class ItemsProcFunc
         if (empty($items[0])) {
             $items = [2, 6];
         }
+
         foreach ($items as $item) {
             $params['items'][] = [$item . 'h', $item];
         }
