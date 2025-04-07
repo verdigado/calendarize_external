@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Verdigado\CalendarizeExternal\Tests\Unit\Domain\Model;
 
+use Verdigado\CalendarizeExternal\Domain\Model\ExternalCalendar;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\TestingFramework\Core\AccessibleObjectInterface;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
@@ -16,7 +17,7 @@ use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 class ExternalCalendarTest extends UnitTestCase
 {
     /**
-     * @var \Verdigado\CalendarizeExternal\Domain\Model\ExternalCalendar|MockObject|AccessibleObjectInterface
+     * @var ExternalCalendar|MockObject|AccessibleObjectInterface
      */
     protected $subject;
 
@@ -25,7 +26,7 @@ class ExternalCalendarTest extends UnitTestCase
         parent::setUp();
 
         $this->subject = $this->getAccessibleMock(
-            \Verdigado\CalendarizeExternal\Domain\Model\ExternalCalendar::class,
+            ExternalCalendar::class,
             ['dummy']
         );
     }

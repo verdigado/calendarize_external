@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Verdigado\CalendarizeExternal\Domain\Model;
 
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+
 /**
  * This file is part of the "Calendarize External" Extension for TYPO3 CMS.
  *
@@ -12,12 +14,16 @@ namespace Verdigado\CalendarizeExternal\Domain\Model;
  *
  * (c) 2022 Falko Trojahn <support@verdigado.net>, verdigado e.G.
  */
-
 /**
  * ExternalCalendar.
  */
-class ExternalCalendar extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class ExternalCalendar extends AbstractEntity
 {
+    /**
+     * @var int
+     */
+    public $scheduler;
+
     /**
      * title.
      *
@@ -58,10 +64,8 @@ class ExternalCalendar extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 
     /**
      * Sets the title.
-     *
-     * @param string $title
      */
-    public function setTitle(string $title)
+    public function setTitle(string $title): void
     {
         $this->title = $title;
     }
@@ -78,10 +82,8 @@ class ExternalCalendar extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 
     /**
      * Sets the icsUrl.
-     *
-     * @param string $icsUrl
      */
-    public function setIcsUrl(string $icsUrl)
+    public function setIcsUrl(string $icsUrl): void
     {
         $this->icsUrl = $icsUrl;
     }
@@ -98,10 +100,8 @@ class ExternalCalendar extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 
     /**
      * Sets the note.
-     *
-     * @param string $note
      */
-    public function setNote(string $note)
+    public function setNote(string $note): void
     {
         $this->note = $note;
     }
@@ -118,10 +118,8 @@ class ExternalCalendar extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 
     /**
      * Sets the scheduler_interval.
-     *
-     * @param int $scheduler_interval
      */
-    public function setSchedulerInterval(int $scheduler_interval)
+    public function setSchedulerInterval(int $scheduler_interval): void
     {
         $this->scheduler = $scheduler_interval;
     }

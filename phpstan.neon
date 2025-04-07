@@ -1,5 +1,9 @@
 parameters:
-	level: 1
-	paths:
-		- Classes
-		- Tests
+  level: 1
+  paths:
+    - Classes
+    - Tests
+  ignoreErrors:
+    - message: '#Variable \$_EXTKEY might not be defined#'
+      path: '*/ext_emconf.php'
+
