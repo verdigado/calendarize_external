@@ -100,15 +100,13 @@ class ResetLastrunCommand extends Command
             $constraints .= ' AND ' . $queryBuilder->expr()->eq('scheduler_interval', $queryBuilder->createNamedParameter((int)$useschedule, Connection::PARAM_INT));
         }
 
-        $statement = $queryBuilder
+        $result = $queryBuilder
             ->select('uid')
-            ->from($table)
-            ->where($constraints)
-            ->execute();
+            ->from($table)->where($constraints)->executeQuery();
 
         // loop thru all external calendar records
         $extcalcount = 0;
-        while ($record = $statement->fetch()) {
+        foreach ($result->fetchAllAssociative() as $record) {
             // reset record
             $connection->update(
                 $table,

@@ -153,23 +153,16 @@ class CalImportCommandController extends Command
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($table);
         $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
         $queryBuilder = $connection->createQueryBuilder();
-        $statement = $queryBuilder
+        $result = $queryBuilder
             ->select('uid', 'pid', 'title', 'ics_url', 'scheduler_interval', 'last_run', 'last_message', 'error_count', 'md5')
             ->from($table)
             ->where(
-                $queryBuilder->expr()->andX(
-                    $queryBuilder->expr()->gt('scheduler_interval', $queryBuilder->createNamedParameter((int)$schedulemin, Connection::PARAM_INT)),
-                    $queryBuilder->expr()->lte('scheduler_interval', $queryBuilder->createNamedParameter((int)$schedule, Connection::PARAM_INT))
-                )
-            )
-            ->andWhere(
-                ' 1 = 1 ' . ($usepids === [] ? '' : 'AND ' . $queryBuilder->expr()->in('pid', (array)$usepids))
-            )
-            ->execute();
+                $queryBuilder->expr()->and($queryBuilder->expr()->gt('scheduler_interval', $queryBuilder->createNamedParameter((int)$schedulemin, Connection::PARAM_INT)), $queryBuilder->expr()->lte('scheduler_interval', $queryBuilder->createNamedParameter((int)$schedule, Connection::PARAM_INT)))
+            )->andWhere(' 1 = 1 ' . ($usepids === [] ? '' : 'AND ' . $queryBuilder->expr()->in('pid', (array)$usepids)))->executeQuery();
 
         $pageQueryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
         // loop thru all external calendars by external calendar record
-        while ($record = $statement->fetch()) {
+        foreach ($result->fetchAllAssociative() as $record) {
             // collect messages per record
             $msg = '';
             $errormsg = '';
@@ -197,7 +190,8 @@ class CalImportCommandController extends Command
                         $pageQueryBuilder->expr()->eq('uid', $pageQueryBuilder->createNamedParameter($page['uid'], Connection::PARAM_INT))
                     );
 
-                $pages = $pageQueryBuilder->execute()->fetch(0);
+                $result = $pageQueryBuilder->executeQuery();
+                $pages = $result->fetchOne();
                 if ($pages['deleted'] == 1) {
                     $deletedpage = $page['uid'];
                     break;
