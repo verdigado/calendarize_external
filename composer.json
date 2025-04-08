@@ -18,15 +18,15 @@
     "issues": "https://github.com/verdigado/calendarize_external/issues"
   },
   "require": {
-    "lochmueller/calendarize": "^12.4 || @dev",
+    "lochmueller/calendarize": "^12.4 || ^13.0 || @dev",
     "typo3/cms-core": "^10.4 || ^11.5 || ^12.4",
     "typo3/cms-scheduler": "^8.7 || ^10.4 || ^11.5 || ^12.4"
   },
   "require-dev": {
     "helhum/typo3-console": "^6.7.7 || ^7.1.6 || ^8",
     "pluswerk/grumphp-config": "^5.0 || ^7.1 || ^8",
-    "saschaegerer/phpstan-typo3": "^1.10.0",
-    "ssch/typo3-rector": "^2.5.0",
+    "saschaegerer/phpstan-typo3": "*",
+    "ssch/typo3-rector": "*",
     "typo3/cms-backend": "^8.7 || ^10.4 || ^11.5 || ^12.4 || 13.*.*@dev",
     "typo3/cms-belog": "^8.7 || ^10.4 || ^11.5 || ^12.4 || 13.*.*@dev",
     "typo3/cms-extbase": "^8.7 || ^10.4 || ^11.5 || ^12.4 || 13.*.*@dev",
@@ -75,9 +75,9 @@
       "@ddev-symlink-project"
     ],
     "ddev-symlink-project": [
-      "mkdir -p .Build/web/typo3conf/ext",
-      "[ -L .Build/web/typo3conf/ext/calendarize_external ] || ln -svnf ../../../../ .Build/web/typo3conf/ext/calendarize_external",
-      "[ ! -f .Build/web/typo3conf/LocalConfiguration.php ] && touch .Build/web/FIRST_INSTALL || exit 0"
+      "mkdir -p .Build/vendor/verdigado",
+      "[ -L .Build/vendor/verdigado/calendarize_external ] || ln -svnf ../../../../ .Build/vendor/verdigado/calendarize_external",
+      "[ ! -f config/system/settings.php ] && touch .Build/web/FIRST_INSTALL || exit 0"
     ],
     "typo3-cms-scripts": [
       "typo3 install:fixfolderstructure"
