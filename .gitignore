@@ -15,3 +15,7 @@ composer.lock
 .project
 .webprj
 nbproject
+
+# for dev tests
+config/
+var/
