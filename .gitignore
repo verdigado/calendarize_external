@@ -19,3 +19,7 @@ nbproject
 # for dev tests
 config/
 var/
+.envrc
+devbox.d/
+devbox.json
+devbox.lock
